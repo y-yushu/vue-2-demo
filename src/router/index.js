@@ -1,20 +1,29 @@
+/*
+ * @Author: yyshu yyshu@hisw.cn
+ * @Date: 2023-03-10 14:44:52
+ * @LastEditors: yyshu yyshu@hisw.cn
+ * @LastEditTime: 2023-03-10 16:17:35
+ * @FilePath: \vue-module-demo\src\router\index.js
+ * @Description: 路由配置
+ */
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import Page1 from "@/views/page1.vue";
+import Page2 from "@/views/page2.vue";
 
 const routes = [
   {
-    path: "/",
-    name: "home",
-    component: HomeView,
+    path: "/page1",
+    name: "page1",
+    component: Page1,
   },
   {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    path: "/page2",
+    name: "Page2",
+    component: Page2,
+  },
+  {
+    path: "/",
+    redirect: "/page2",
   },
 ];
 
