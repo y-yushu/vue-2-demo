@@ -1,2 +1,3 @@
-# vue-module-demo
+# Vue2 组件练习项目
+
 vue2的练习组件
