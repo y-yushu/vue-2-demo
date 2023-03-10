@@ -2,7 +2,7 @@
  * @Author: yyshu yyshu@hisw.cn
  * @Date: 2023-03-10 16:15:13
  * @LastEditors: yyshu yyshu@hisw.cn
- * @LastEditTime: 2023-03-10 17:46:47
+ * @LastEditTime: 2023-03-10 17:52:41
  * @FilePath: \vue-module-demo\src\views\page2.vue
  * @Description: 组件2--Merge Images
 -->
@@ -26,7 +26,6 @@
 
 <script>
 import { getSymbol } from "@/utils/draw.js";
-// import icon_tree from "@/assets/images/tree.png";
 import icon_contact from "@/assets/images/contact.png";
 
 export default {
