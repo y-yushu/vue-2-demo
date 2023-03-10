@@ -2,7 +2,7 @@
  * @Author: yyshu yyshu@hisw.cn
  * @Date: 2023-03-10 16:15:13
  * @LastEditors: yyshu yyshu@hisw.cn
- * @LastEditTime: 2023-03-10 17:06:18
+ * @LastEditTime: 2023-03-10 17:46:47
  * @FilePath: \vue-module-demo\src\views\page2.vue
  * @Description: 组件2--Merge Images
 -->
@@ -25,9 +25,9 @@
 </template>
 
 <script>
-import mergeImages from "merge-images";
-import icon_back from "@/assets/images/back.png";
-import icon_tree from "@/assets/images/tree.png";
+import { getSymbol } from "@/utils/draw.js";
+// import icon_tree from "@/assets/images/tree.png";
+import icon_contact from "@/assets/images/contact.png";
 
 export default {
   name: "ViewPage2",
@@ -37,27 +37,13 @@ export default {
       image_url: "",
     };
   },
-  created() {
-    mergeImages([icon_back, icon_tree]).then((b64) => {
-      console.log(31, b64);
-      this.image_url = b64;
-    });
-  },
+  created() {},
   methods: {
     drawColorBack() {
-      console.log("drawColorBack");
-      let canvas = document.createElement("canvas");
-      canvas.width = "200";
-      canvas.height = "200";
-      let ctx = canvas.getContext("2d");
-      //3.绘制
-      ctx.beginPath(); //开始绘制
-      ctx.arc(100, 100, 100, 0, 2 * Math.PI); //arc 的意思是“弧”
-      ctx.fillStyle = "#ff0"; //设置填充颜色
-      ctx.fill(); //开始填充
-      ctx.strokeStyle = "blue"; //将线条颜色设置为蓝色
-      ctx.stroke(); //stroke() 方法默认颜色是黑色（如果没有上面一行，则会是黑色）。
-      console.log("绘制完成");
+      getSymbol("#48b8dd", icon_contact).then((b64) => {
+        console.log(b64);
+        this.image_url = b64;
+      });
     },
   },
 };
