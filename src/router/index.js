@@ -2,7 +2,7 @@
  * @Author: yyshu yyshu@hisw.cn
  * @Date: 2023-03-14 14:24:51
  * @LastEditors: yyshu yyshu@hisw.cn
- * @LastEditTime: 2023-03-14 14:26:11
+ * @LastEditTime: 2023-05-19 18:40:33
  * @FilePath: \vue-module-demo\src\router\index.js
  * @Description: 路由
  */
@@ -17,6 +17,13 @@ const routes = [
     path: "/",
     name: "home",
     component: HomeView,
+    redirect: "/dom-to-image",
+  },
+  {
+    // 将Dom转存为图片
+    path: "/dom-to-image",
+    name: "home",
+    component: () => import("@/views/Dom-to-image"),
   },
 ];
 
