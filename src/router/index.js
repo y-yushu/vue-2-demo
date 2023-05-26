@@ -2,7 +2,7 @@
  * @Author: yyshu yyshu@hisw.cn
  * @Date: 2023-03-14 14:24:51
  * @LastEditors: yyshu yyshu@hisw.cn
- * @LastEditTime: 2023-05-19 18:40:33
+ * @LastEditTime: 2023-05-26 15:07:24
  * @FilePath: \vue-module-demo\src\router\index.js
  * @Description: 路由
  */
@@ -17,12 +17,18 @@ const routes = [
     path: "/",
     name: "home",
     component: HomeView,
-    redirect: "/dom-to-image",
+    redirect: "/wang-editor",
+  },
+  {
+    // wangEditor编辑器
+    path: "/wang-editor",
+    name: "wangEditor",
+    component: () => import("@/views/Wang-editor/Wang-editor"),
   },
   {
     // 将Dom转存为图片
     path: "/dom-to-image",
-    name: "home",
+    name: "domToImage",
     component: () => import("@/views/Dom-to-image"),
   },
 ];
