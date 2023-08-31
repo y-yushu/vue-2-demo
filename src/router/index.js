@@ -2,7 +2,7 @@
  * @Author: yyshu yyshu@hisw.cn
  * @Date: 2023-03-14 14:24:51
  * @LastEditors: yyshu yyshu@hisw.cn
- * @LastEditTime: 2023-05-26 15:07:24
+ * @LastEditTime: 2023-08-31 16:22:05
  * @FilePath: \vue-module-demo\src\router\index.js
  * @Description: 路由
  */
@@ -17,7 +17,13 @@ const routes = [
     path: "/",
     name: "home",
     component: HomeView,
-    redirect: "/wang-editor",
+    redirect: "/vue-pdf",
+  },
+  {
+    // vue-pdf使用
+    path: "/vue-pdf",
+    name: "vuePdf",
+    component: () => import("@/views/vue-pdf"),
   },
   {
     // wangEditor编辑器
