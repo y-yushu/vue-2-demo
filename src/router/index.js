@@ -17,7 +17,13 @@ const routes = [
     path: "/",
     name: "home",
     component: HomeView,
-    redirect: "/vue-pdf",
+    redirect: "/vColorPicker",
+  },
+  {
+    // vColorPicker
+    path: "/vColorPicker",
+    name: "vColorPicker",
+    component: () => import("@/views/vColorPicker"),
   },
   {
     // vue-pdf使用
