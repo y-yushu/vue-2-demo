@@ -6,49 +6,55 @@
  * @FilePath: \vue-module-demo\src\router\index.js
  * @Description: 路由
  */
-import Vue from "vue";
-import VueRouter from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import HomeView from '../views/HomeView.vue'
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 const routes = [
   {
-    path: "/",
-    name: "home",
+    path: '/',
+    name: 'home',
     component: HomeView,
-    redirect: "/vColorPicker",
+    redirect: '/sse'
+  },
+  {
+    // SSE连接
+    path: '/sse',
+    name: 'sse',
+    component: () => import('@/views/sse')
   },
   {
     // vColorPicker
-    path: "/vColorPicker",
-    name: "vColorPicker",
-    component: () => import("@/views/vColorPicker"),
+    path: '/vColorPicker',
+    name: 'vColorPicker',
+    component: () => import('@/views/vColorPicker')
   },
   {
     // vue-pdf使用
-    path: "/vue-pdf",
-    name: "vuePdf",
-    component: () => import("@/views/vue-pdf"),
+    path: '/vue-pdf',
+    name: 'vuePdf',
+    component: () => import('@/views/vue-pdf')
   },
   {
     // wangEditor编辑器
-    path: "/wang-editor",
-    name: "wangEditor",
-    component: () => import("@/views/Wang-editor/Wang-editor"),
+    path: '/wang-editor',
+    name: 'wangEditor',
+    component: () => import('@/views/Wang-editor/Wang-editor')
   },
   {
     // 将Dom转存为图片
-    path: "/dom-to-image",
-    name: "domToImage",
-    component: () => import("@/views/Dom-to-image"),
-  },
-];
+    path: '/dom-to-image',
+    name: 'domToImage',
+    component: () => import('@/views/Dom-to-image')
+  }
+]
 
 const router = new VueRouter({
-  mode: "history",
+  mode: 'history',
   base: process.env.BASE_URL,
-  routes,
-});
+  routes
+})
 
-export default router;
+export default router
