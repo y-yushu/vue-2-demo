@@ -1,0 +1,696 @@
+.cu-edit {
+  padding: 20px !important;
+  outline: none;
+  border-top: 1px solid orangered;
+  border-bottom: 1px solid orchid;
+}
+
+.cu-edit input {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  font-size: 16px;
+  width: 200px;
+  transition: border-color 0.3s; /* 添加过渡效果 */
+}
+
+.cu-edit input:hover {
+  border-color: #66afe9;
+}
+
+.cu-edit input:focus {
+  outline: none; /* 移除默认的聚焦样式 */
+  border-color: #66afe9;
+  box-shadow: 0 0 0 2px rgba(102, 175, 233, 0.6); /* 添加聚焦时的边框阴影效果 */
+}
+
+.cu-edit select {
+  appearance: none; /* 移除浏览器默认样式 */
+  -webkit-appearance: none; /* Safari 和 Chrome 的兼容性 */
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  font-size: 1rem;
+  width: 200px;
+  cursor: pointer; /* 鼠标悬停时显示指针样式 */
+  transition: background-color 0.3s, border-color 0.3s; /* 添加过渡效果 */
+}
+.cu-edit select:hover {
+  background-color: #f0f0f0;
+}
+.cu-edit select:focus {
+  outline: none; /* 移除默认的聚焦样式 */
+  border-color: #66afe9;
+  box-shadow: 0 0 0 2px rgba(102, 175, 233, 0.6); /* 添加聚焦时的边框阴影效果 */
+}
+.cu-edit select option {
+  background-color: #fff;
+  color: #333;
+  padding: 8px 16px;
+}
+.cu-edit select::after {
+  content: '\25bc'; /* Unicode 编码表示向下的箭头 */
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none; /* 禁止点击 */
+}
+
+/* 
+    抄的@kangc/v-md-editor的样式
+ */
+
+.cu-edit {
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  font-family: PingFang SC-Regular, PingFang SC;
+  position: relative;
+}
+
+.cu-edit > :first-child,
+.cu-edit > div[data-v-md-line]:first-child > :first-child {
+  margin-top: 0 !important;
+}
+
+.cu-edit > :last-child,
+.cu-edit > div[data-v-md-line]:last-child > :last-child {
+  margin-top: 0 !important;
+}
+
+.cu-edit a {
+  color: #0366d6;
+  font-weight: normal;
+  text-decoration: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.cu-edit a:hover {
+  text-decoration: underline;
+}
+
+.cu-edit kbd {
+  display: inline-block;
+  padding: 3px 5px;
+  color: #444d56;
+  font: 11px SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+  line-height: 10px;
+  vertical-align: middle;
+  background-color: #fafbfc;
+  border: 1px solid #d1d5da;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #d1d5da;
+}
+
+.cu-edit::after,
+.cu-edit::before {
+  display: table;
+  content: '';
+}
+
+.cu-edit::after {
+  clear: both;
+}
+
+.cu-edit a:not([href]) {
+  text-decoration: none;
+}
+
+.cu-edit .absent {
+  color: #cb2431;
+}
+
+.cu-edit .anchor {
+  float: left;
+  margin-left: -20px;
+  padding-right: 4px;
+  line-height: 1;
+}
+
+.cu-edit .anchor:focus {
+  outline: none;
+}
+
+.cu-edit blockquote,
+.cu-edit details,
+.cu-edit dl,
+.cu-edit ol,
+.cu-edit p,
+.cu-edit pre,
+.cu-edit table,
+.cu-edit ul {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.cu-edit hr {
+  height: 0.25em;
+  margin: 24px 0;
+  padding: 0;
+  background-color: #e1e4e8;
+  border: 0;
+}
+
+.cu-edit blockquote {
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
+}
+
+.cu-edit blockquote > :first-child {
+  margin-top: 0;
+}
+
+.cu-edit blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.cu-edit h1,
+.cu-edit h2,
+.cu-edit h3,
+.cu-edit h4,
+.cu-edit h5,
+.cu-edit h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.cu-edit i,
+.cu-edit em {
+  font-style: italic;
+}
+.cu-edit ul {
+  list-style-type: disc;
+}
+.cu-edit ul ul,
+.cu-edit ol ul {
+  list-style-type: circle;
+}
+.cu-edit ol ol ul,
+.cu-edit ol ul ul,
+.cu-edit ul ol ul,
+.cu-edit ul ul ul {
+  list-style-type: square;
+}
+.cu-edit ol {
+  list-style-type: decimal;
+}
+
+.cu-edit h1 .octicon-link,
+.cu-edit h2 .octicon-link,
+.cu-edit h3 .octicon-link,
+.cu-edit h4 .octicon-link,
+.cu-edit h5 .octicon-link,
+.cu-edit h6 .octicon-link {
+  color: #1b1f23;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+.cu-edit h1:hover .anchor,
+.cu-edit h2:hover .anchor,
+.cu-edit h3:hover .anchor,
+.cu-edit h4:hover .anchor,
+.cu-edit h5:hover .anchor,
+.cu-edit h6:hover .anchor {
+  text-decoration: none;
+}
+
+.cu-edit h1:hover .anchor .octicon-link,
+.cu-edit h2:hover .anchor .octicon-link,
+.cu-edit h3:hover .anchor .octicon-link,
+.cu-edit h4:hover .anchor .octicon-link,
+.cu-edit h5:hover .anchor .octicon-link,
+.cu-edit h6:hover .anchor .octicon-link {
+  visibility: visible;
+}
+
+.cu-edit h1 code,
+.cu-edit h1 tt,
+.cu-edit h2 code,
+.cu-edit h2 tt,
+.cu-edit h3 code,
+.cu-edit h3 tt,
+.cu-edit h4 code,
+.cu-edit h4 tt,
+.cu-edit h5 code,
+.cu-edit h5 tt,
+.cu-edit h6 code,
+.cu-edit h6 tt {
+  font-size: inherit;
+}
+
+.cu-edit h1 {
+  font-size: 1.5rem;
+}
+
+.cu-edit h1,
+.cu-edit h2 {
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+.cu-edit h2 {
+  font-size: 1.3em;
+}
+
+.cu-edit h3 {
+  font-size: 1.2em;
+}
+
+.cu-edit h4 {
+  font-size: 1em;
+}
+
+.cu-edit h5 {
+  font-size: 0.875em;
+}
+
+.cu-edit h6 {
+  color: #6a737d;
+  font-size: 0.85em;
+}
+
+.cu-edit ol,
+.cu-edit ul {
+  padding-left: 2em;
+}
+
+.cu-edit ol.no-list,
+.cu-edit ul.no-list {
+  padding: 0;
+  list-style-type: none;
+}
+
+.cu-edit ol ol,
+.cu-edit ol ul,
+.cu-edit ul ol,
+.cu-edit ul ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.cu-edit li {
+  word-wrap: break-all;
+}
+
+.cu-edit li > p {
+  margin-top: 16px;
+}
+
+.cu-edit li + li {
+  margin-top: 0.25em;
+}
+
+.cu-edit dl {
+  padding: 0;
+}
+
+.cu-edit dl dt {
+  margin-top: 16px;
+  padding: 0;
+  font-weight: 600;
+  font-size: 1em;
+  font-style: italic;
+}
+
+.cu-edit dl dd {
+  margin-bottom: 16px;
+  padding: 0 16px;
+}
+
+.cu-edit table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.cu-edit table th {
+  font-weight: 600;
+}
+
+.cu-edit table td,
+.cu-edit table th {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+.cu-edit table tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+.cu-edit table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+.cu-edit table img {
+  background-color: initial;
+}
+
+.cu-edit img {
+  box-sizing: initial;
+  max-width: 100%;
+  background-color: #fff;
+  border: 0;
+}
+
+.cu-edit img[align='right'] {
+  padding-left: 20px;
+}
+
+.cu-edit img[align='left'] {
+  padding-right: 20px;
+}
+
+.cu-edit .emoji {
+  max-width: none;
+  vertical-align: text-top;
+  background-color: initial;
+}
+
+.cu-edit span.frame {
+  display: block;
+  overflow: hidden;
+}
+
+.cu-edit span.frame > span {
+  display: block;
+  float: left;
+  width: auto;
+  margin: 13px 0 0;
+  padding: 7px;
+  overflow: hidden;
+  border: 1px solid #dfe2e5;
+}
+
+.cu-edit span.frame span img {
+  display: block;
+  float: left;
+}
+
+.cu-edit span.frame span span {
+  display: block;
+  clear: both;
+  padding: 5px 0 0;
+  color: #24292e;
+}
+
+.cu-edit span.align-center {
+  display: block;
+  clear: both;
+  overflow: hidden;
+}
+
+.cu-edit span.align-center > span {
+  display: block;
+  margin: 13px auto 0;
+  overflow: hidden;
+  text-align: center;
+}
+
+.cu-edit span.align-center span img {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.cu-edit span.align-right {
+  display: block;
+  clear: both;
+  overflow: hidden;
+}
+
+.cu-edit span.align-right > span {
+  display: block;
+  margin: 13px 0 0;
+  overflow: hidden;
+  text-align: right;
+}
+
+.cu-edit span.align-right span img {
+  margin: 0;
+  text-align: right;
+}
+
+.cu-edit span.float-left {
+  display: block;
+  float: left;
+  margin-right: 13px;
+  overflow: hidden;
+}
+
+.cu-edit span.float-left span {
+  margin: 13px 0 0;
+}
+
+.cu-edit span.float-right {
+  display: block;
+  float: right;
+  margin-left: 13px;
+  overflow: hidden;
+}
+
+.cu-edit span.float-right > span {
+  display: block;
+  margin: 13px auto 0;
+  overflow: hidden;
+  text-align: right;
+}
+
+.cu-edit code,
+.cu-edit tt {
+  margin: 0;
+  padding: 0.2em 0.4em;
+  font-size: 85%;
+  background-color: rgba(27, 31, 35, 0.05);
+  border-radius: 3px;
+}
+
+.cu-edit code br,
+.cu-edit tt br {
+  display: none;
+}
+
+.cu-edit del code {
+  text-decoration: inherit;
+}
+
+.cu-edit div[class*='v-md-pre-wrapper-'] {
+  position: relative;
+  background-color: #f6f8fa;
+}
+
+.cu-edit div[class*='v-md-pre-wrapper-'] pre,
+.cu-edit div[class*='v-md-pre-wrapper-'] pre[class*='v-md-prism-'] {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+
+.cu-edit div[class*='v-md-pre-wrapper-'].line-numbers-mode pre {
+  padding-left: 4.5rem;
+}
+
+.cu-edit div[class*='v-md-pre-wrapper-'].line-numbers-mode::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 3.5rem;
+  height: 100%;
+  background-color: #f6f8fa;
+  border-right: 1px solid #dcdfe6;
+  border-radius: 6px 0 0 6px;
+  content: '';
+}
+
+.cu-edit div[class*='v-md-pre-wrapper-'].line-numbers-mode .line-numbers-wrapper {
+  position: absolute;
+  top: 0;
+  width: 3.5rem;
+  padding: 16px 0;
+  color: #909399;
+  font-size: 85%;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.cu-edit div[class*='v-md-pre-wrapper-'].line-numbers-mode .line-numbers-wrapper .line-number {
+  position: relative;
+  z-index: 4;
+  font-size: 0.85em;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.cu-edit pre,
+.cu-edit code {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+}
+
+.cu-edit pre > code {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  white-space: pre;
+  word-break: normal;
+  background: transparent;
+  border: 0;
+}
+
+.cu-edit pre {
+  margin-bottom: 16px;
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  word-wrap: normal;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+}
+
+.cu-edit pre code,
+.cu-edit pre tt {
+  display: inline;
+  max-width: auto;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  color: #444d56;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: initial;
+  border: 0;
+}
+
+.cu-edit .csv-data td,
+.cu-edit .csv-data th {
+  padding: 5px;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.cu-edit .csv-data .blob-num {
+  padding: 10px 8px 9px;
+  text-align: right;
+  background: #fff;
+  border: 0;
+}
+
+.cu-edit .csv-data tr {
+  border-top: 0;
+}
+
+.cu-edit .csv-data th {
+  font-weight: 600;
+  background: #f6f8fa;
+  border-top: 0;
+}
+
+.cu-edit .hljs {
+  display: block;
+  padding: 0.5em;
+  overflow-x: auto;
+  color: #333;
+  background: #f8f8f8;
+}
+
+.cu-edit .hljs-comment,
+.cu-edit .hljs-quote {
+  color: #998;
+  font-style: italic;
+}
+
+.cu-edit .hljs-keyword,
+.cu-edit .hljs-selector-tag,
+.cu-edit .hljs-subst {
+  color: #333;
+  font-weight: bold;
+}
+
+.cu-edit .hljs-number,
+.cu-edit .hljs-literal,
+.cu-edit .hljs-variable,
+.cu-edit .hljs-template-variable,
+.cu-edit .hljs-tag .hljs-attr {
+  color: #008080;
+}
+
+.cu-edit .hljs-string,
+.cu-edit .hljs-doctag {
+  color: #d14;
+}
+
+.cu-edit .hljs-title,
+.cu-edit .hljs-section,
+.cu-edit .hljs-selector-id {
+  color: #900;
+  font-weight: bold;
+}
+
+.cu-edit .hljs-subst {
+  font-weight: normal;
+}
+
+.cu-edit .hljs-type,
+.cu-edit .hljs-class .hljs-title {
+  color: #458;
+  font-weight: bold;
+}
+
+.cu-edit .hljs-tag,
+.cu-edit .hljs-name,
+.cu-edit .hljs-attribute {
+  color: #000080;
+  font-weight: normal;
+}
+
+.cu-edit .hljs-regexp,
+.cu-edit .hljs-link {
+  color: #009926;
+}
+
+.cu-edit .hljs-symbol,
+.cu-edit .hljs-bullet {
+  color: #990073;
+}
+
+.cu-edit .hljs-built_in,
+.cu-edit .hljs-builtin-name {
+  color: #0086b3;
+}
+
+.cu-edit .hljs-meta {
+  color: #999;
+  font-weight: bold;
+}
+
+.cu-edit .hljs-deletion {
+  background: #fdd;
+}
+
+.cu-edit .hljs-addition {
+  background: #dfd;
+}
+
+.cu-edit .hljs-emphasis {
+  font-style: italic;
+}
+
+.cu-edit .hljs-strong {
+  font-weight: bold;
+}

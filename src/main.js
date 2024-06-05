@@ -5,6 +5,8 @@ import store from './store'
 import vcolorpicker from 'vcolorpicker'
 Vue.use(vcolorpicker)
 
+import "./registerServiceWorker"
+
 Vue.config.productionTip = false
 
 new Vue({

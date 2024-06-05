@@ -18,4 +18,34 @@ module.exports = defineConfig({
       }
     }
   }
+  // pwa: {
+  //   name: '地图工具',
+  //   themeColor: 'red',
+  //   appleMobileWebAppCapable: true,
+  //   // manifest 设置
+  //   manifestOptions: {
+  //     name: '地图工具',
+  //     short_name: '地图工具',
+  //     theme_color: 'white',
+  //     start_url: '.',
+  //     display: 'standalone',
+  //     background_color: 'white',
+  //     icons: [
+  //       {
+  //         src: 'favicon.png', // 这里的图片地址对应 /public 目录中的图片地址
+  //         sizes: '512x512',
+  //         type: 'image/png',
+  //         purpose: 'any'
+  //       }
+  //     ]
+  //   },
+  //   // 图标
+  //   iconPaths: {
+  //     // 这里是项目外的路径，对应 public 目录
+  //     favicon32: 'favicon.png', // 这里的图片地址对应 /public 目录中的图片地址
+  //     favicon16: 'favicon.png', // 这里的图片地址对应 /public 目录中的图片地址
+  //     maskIcon: null,
+  //     msTileImage: null
+  //   }
+  // }
 })
