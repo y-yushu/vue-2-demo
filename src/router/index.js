@@ -17,7 +17,13 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
-    redirect: '/md-edit'
+    redirect: '/md-mermaid'
+  },
+  {
+    // md实现流程图
+    path: '/md-mermaid',
+    name: 'mdMermaid',
+    component: () => import('@/views/md-mermaid/index')
   },
   {
     // 自定义md编辑
