@@ -17,7 +17,19 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
-    redirect: '/html-element'
+    redirect: '/md-mermaid'
+  },
+  {
+    // md实现流程图2
+    path: '/md-mermaid2',
+    name: 'mdMermaid2',
+    component: () => import('@/views/md-mermaid/index2')
+  },
+  {
+    // md实现流程图
+    path: '/md-mermaid',
+    name: 'mdMermaid',
+    component: () => import('@/views/md-mermaid/index')
   },
   {
     // html仿element
