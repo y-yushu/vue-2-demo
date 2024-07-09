@@ -17,7 +17,19 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
-    redirect: '/md-edit'
+    redirect: '/html-element'
+  },
+  {
+    // html仿element
+    path: '/html-element',
+    name: 'htmlElement',
+    component: () => import('@/views/html-element/index')
+  },
+  {
+    // 自定义md编辑
+    path: '/md-edit_2',
+    name: 'mdEdit2',
+    component: () => import('@/views/md-edit2/index')
   },
   {
     // 自定义md编辑

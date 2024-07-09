@@ -9,71 +9,51 @@ import VueMarkdownEditor from '@kangc/v-md-editor'
 import '@kangc/v-md-editor/lib/style/base-editor.css'
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js'
 import '@kangc/v-md-editor/lib/theme/style/vuepress.css'
-// import markdownIt from 'markdown-it'
-import markdownItContainer from 'markdown-it-container'
-
 // Prism
 import Prism from 'prismjs'
-// highlight code
 import 'prismjs/components/prism-json'
 
-// // 自定义Markdown解析逻辑
-// const md = markdownIt()
-// md.use(markdownItContainer, 'custom', {
-//   validate: params => {
-//     return params.trim().match(/^custom\s*$/)
-//   },
-//   render: (tokens, idx) => {
-//     if (tokens[idx].nesting === 1) {
-//       return '<div class="custom-block">\n'
-//     } else {
-//       return '</div>\n'
-//     }
-//   }
-// })
+// 定义自定义标签解析器
+function customTagParser(md) {
+  // 插入解析规则
+  md.inline.ruler.before('emphasis', 'custom_tag', (state, silent) => {
+    const start = state.pos
 
+    if (state.src.charCodeAt(start) !== 0x3c) return false
+
+    const match = state.src.slice(start).match(/^<custom-tag>(.*?)<\/custom-tag>/)
+
+    if (!match) return false
+
+    if (silent) return false
+
+    const token = state.push('custom_tag', '', 0)
+    token.content = match[1]
+
+    state.pos += match[0].length
+
+    return true
+  })
+
+  // 定义渲染规则
+  md.renderer.rules.custom_tag = (tokens, idx) => {
+    const token = tokens[idx]
+    return `<span class="custom-block">${token.content}<i></i></span>`
+  }
+}
+
+// 自定义Markdown解析逻辑
 VueMarkdownEditor.use(vuepressTheme, {
   Prism
 }).extendMarkdown(mdParser => {
-  mdParser.use(markdownItContainer, 'custom', {
-    validate: params => {
-      return params.trim().match(/^custom\s*$/)
-    },
-    render: (tokens, idx) => {
-      if (tokens[idx].nesting === 1) {
-        return '<div class="custom-block">\n'
-      } else {
-        return '</div>\n'
-      }
-    }
-  })
+  customTagParser(mdParser)
 })
 
 const mock = `
 # 一级标题
-
-## 二级标题
-
-### 三级标题
-
-User: 培养皿中的细菌每分钟扩增一倍面积，48分钟可以填满，问填满一半要多久？
-Assistant: 这个问题可以通过简单的数学逻辑来解决。
-
-假设培养皿的总面积为 ( T )，且我们知道在第 ( 48 ) 分钟时细菌覆盖了整个培养皿。因此，在 ( 48 ) 分钟时，面积是 ( T )。
-
-由于细菌每分钟面积增加一倍，我们可以推导出细菌在任何时间 ( t ) 的面积表达式。设 ( A(t) ) 是在 ( t ) 分钟内细菌所占据的面积，则有：
-:::custom
-[ A(t) = T/2^{(48-t)} ]
-:::
-
-当细菌填满培养皿的一半（即$frac{12}{3} = 4$）时，
-$$
-frac{12}{3} = 4
-$$
-
-$$
-2^(t-1) = A * 2^(48 - t)
-$$
+这是一个自定义标签：<custom-tag>{"id":"tskd02"}</custom-tag>
+你好世界
+<custom-tag>{"id":"tskd03"}</custom-tag>
 `
 
 export default {
@@ -81,14 +61,50 @@ export default {
   components: { VueMarkdownEditor },
   data() {
     return {
-      value1: mock
+      value1: ''
     }
   },
-  methods: {}
+  created() {
+    this.value1 = mock
+  },
+  mounted() {
+    document.addEventListener('click', this.clickListener)
+  },
+  destroyed() {
+    document.removeEventListener('click', this.clickListener)
+  },
+  methods: {
+    clickListener(event) {
+      const dom = event.target
+      if (dom.nodeName === 'I') {
+        const value = this.value1
+        const regex = /<custom-tag>(.*?)<\/custom-tag>/g
+        let match
+        while ((match = regex.exec(value)) !== null) {
+          console.log('-----------------------------')
+          console.log(match[0]) // 输出匹配到的整个标签
+          const obj = JSON.parse(match[1])
+          console.log('obj', obj)
+          if (obj?.id === 'tskd02') {
+            // 计算起始位置和结束位置
+            const startIndex = match.index // 匹配到的字符串在原始字符串中的起始位置
+            const endIndex = startIndex + match[0].length - 1 // 结束位置为起始位置加上字符串长度减一（因为索引从0开始）
+            console.log(`起始位置: ${startIndex}, 结束位置: ${endIndex}`)
+            const long = value.substring(startIndex, endIndex + 1)
+            console.log('long', long)
+            const resultString = value.substring(0, startIndex) + value.substring(endIndex + 1)
+            console.log('resultString', resultString)
+            this.value1 = resultString
+            return
+          }
+        }
+      }
+    }
+  }
 }
 </script>
 
-<style>
+<style lang="less">
 .page {
   height: 100%;
 }
@@ -96,7 +112,16 @@ export default {
   height: 100%;
 }
 .custom-block {
+  position: relative;
   background: greenyellow;
   color: blue;
+  & > i {
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background-color: aquamarine;
+    cursor: pointer;
+  }
 }
 </style>
