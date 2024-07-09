@@ -1,14 +1,11 @@
 <template>
   <div class="page">
-    <button @click="tttt">测试1</button>
-    <!-- <VueMarkdownEditor v-model="value1" /> -->
+    <button @click="tttt">赋值</button>
     <VMdPreview :text="value1" />
   </div>
 </template>
 
 <script>
-// import VueMarkdownEditor from '@kangc/v-md-editor'
-// import '@kangc/v-md-editor/lib/style/base-editor.css'
 import VMdPreview from '@kangc/v-md-editor/lib/preview'
 import '@kangc/v-md-editor/lib/style/preview.css'
 // 代码高亮
@@ -20,29 +17,25 @@ import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/
 // 代码一键复制
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index'
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css'
-// Mermaid流程图
-// import createMermaidPlugin from '@kangc/v-md-editor/lib/plugins/mermaid/cdn'
-// import '@kangc/v-md-editor/lib/plugins/mermaid/mermaid.css'
 VMdPreview.use(vuepressTheme, { Prism })
   .use(createLineNumbertPlugin())
   .use(createCopyCodePlugin())
   .extendMarkdown(md => {
     console.log('md.block.ruler', md.block.ruler)
 
+    const uid = 'cdkl3'
     // 保留默认渲染
-    const defaultRender =
-      md.renderer.rules.fence ||
-      function (tokens, idx, options, env, self) {
-        return self.renderToken(tokens, idx, options)
-      }
+    const defaultRender = md.renderer.rules.fence
     // 添加自定义围栏代码块的渲染规则
     md.renderer.rules.fence = (tokens, idx, options, env, self) => {
       const token = tokens[idx]
+      console.log('token', token)
       if (token.info === 'mermaid') {
-        setTimeout(() => {
-          window.mermaid.init()
-        }, 100)
-        return `<span class="mermaid">${token.content}</span>`
+        return `<div class="mermaid-box">
+          <span id="mermaid-${uid}-content" class="mermaid-span">${token.content}</span>
+          <span id="mermaid-${uid}-mermaid"></span>
+          <button id="mermaid-${uid}-button" class="mermaid-button">渲染</button>
+          </div>`
       } else {
         return defaultRender(tokens, idx, options, env, self)
       }
@@ -116,12 +109,54 @@ export default {
   components: { VMdPreview },
   data() {
     return {
-      value1: '# 准备'
+      value1: '# 准备',
+      ind: 0,
+      chan: false,
+      timer: null
     }
+  },
+  watch: {},
+  mounted() {
+    console.log('--------')
+    document.addEventListener('click', this.clickListener)
+  },
+  destroyed() {
+    document.removeEventListener('click', this.clickListener)
   },
   methods: {
     tttt() {
-      this.value1 = mock
+      // this.value1 = mock
+      this.ind = 0
+      this.value1 = ''
+      this.getNext()
+    },
+    getNext() {
+      if (mock[this.ind]) {
+        this.value1 += mock[this.ind]
+        this.$nextTick(() => {
+          this.ind++
+          this.getNext()
+        })
+        // setTimeout(() => {
+        // }, 10)
+      }
+    },
+    clickListener(e) {
+      console.log('e.target', e.target)
+      if (e.target.classList.contains('mermaid-button')) {
+        console.log('成功')
+        const regex = /mermaid-(\w+)-button/
+        const match = e.target.id.match(regex)
+        const xxx = match[1]
+        console.log('xxx', xxx)
+        const contentDom = document.getElementById(`mermaid-${xxx}-content`)
+        const content = contentDom.textContent
+        const mermDom = document.getElementById(`mermaid-${xxx}-mermaid`)
+        mermDom.innerHTML = content
+        window.mermaid.run({
+          querySelector: `#mermaid-${xxx}-mermaid`
+        })
+      }
     }
   }
 }
@@ -131,11 +166,21 @@ export default {
 .page {
   height: 100%;
 }
-.v-md-editor {
-  height: 100%;
+.mermaid-box {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
-.custom-block {
-  background: greenyellow;
-  color: blue;
+.mermaid-box:hover .mermaid-button {
+  display: block;
+}
+.mermaid-button {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.mermaid-span {
+  white-space: pre-wrap;
 }
 </style>
