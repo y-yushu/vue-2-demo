@@ -17,7 +17,13 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
-    redirect: '/md-mermaid'
+    redirect: '/echart-1'
+  },
+  {
+    // echart图表1
+    path: '/echart-1',
+    name: 'EchartOne',
+    component: () => import('@/views/echarts/index1')
   },
   {
     // md实现流程图2

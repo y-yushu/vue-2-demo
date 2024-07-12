@@ -15,6 +15,7 @@
     "@wangeditor/plugin-upload-attachment": "^1.1.0",
     "core-js": "^3.8.3",
     "dom-to-image": "^2.6.0",
+    "echarts": "^4.9.0",
     "js-audio-recorder": "^1.0.7",
     "less-loader": "^12.2.0",
     "markdown-it": "^14.1.0",
