@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="box">
     <div id="map"></div>
-    <div style="padding-left: 200px">
+    <div style="margin-top: 20px">
       <button @click="test1">测试1</button>
       <button @click="test2">测试2</button>
       <button @click="test3">测试3</button>
@@ -38,25 +38,33 @@ export default {
     }
   },
   mounted() {
+    const generateMainBranch = ({ pT, pL, pW, pH, cT, cL, cW, cH, direction }) => {
+      console.log('111', pT, pL, pW, pH)
+      console.log('222', cT, cL, cW, cH)
+      console.log('direction', direction)
+      const x1 = pW
+      const y1 = pT + pH / 2
+      const c1 = pW + (cL - pW) / 2
+      const c2 = cT + cH / 2
+      return `M ${x1} ${y1} H ${c1} V ${c2} H ${cL}`
+    }
     console.log('example', example)
-    // const theme = {
-    //   name: 'Latte',
-    //   palette: ['#dd7878', '#ea76cb', '#8839ef', '#e64553', '#fe640b', '#df8e1d', '#40a02b', '#209fb5', '#1e66f5', '#7287fd'],
-    //   cssVar: {
-    //     '--main-color': '#000000',
-    //     '--main-bgcolor': '#ffffff',
-    //     '--color': '#777777',
-    //     '--bgcolor': '#f6f6f6',
-    //     '--panel-color': '#444446',
-    //     '--panel-bgcolor': '#ffffff',
-    //     '--panel-border-color': '#eaeaea'
-    //   }
-    // }
-    const theme = MindElixir.DARK_THEME
+    const theme = MindElixir.THEME
+    theme.cssVar['--root-bgcolor'] = '#2499f2'
+    theme.cssVar['--root-radius'] = '5px'
+    theme.cssVar['--main-radius'] = '5px'
+    theme.palette = ['#27f25a']
     this.ME = new MindElixir({
       el: '#map',
       locale: 'zh_CN',
-      before: {}
+      draggable: true, // 启用节点拖拽
+      editable: true, // 启用编辑功能
+      contextMenu: true, // 启用右键菜单
+      toolBar: true, // 启用工具栏
+      nodeMenu: true, // 启用节点菜单
+      keypress: true, // 启用快捷键
+      // before: {},
+      generateMainBranch
     })
     this.ME.bus.addListener('operation', operation => {
       console.log('operation', operation)
@@ -71,6 +79,9 @@ export default {
       const mock2 = {
         id: 'root',
         topic: '中心主题222',
+        style: {
+          color: 'yellow'
+        },
         children: [
           {
             id: 'child3',
@@ -102,8 +113,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.box {
+  text-align: center;
+}
 #map {
   width: 100%;
   height: 800px;
+  overflow: auto;
 }
 </style>
