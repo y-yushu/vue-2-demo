@@ -44,6 +44,9 @@ dependencies:
   markdown-it-html5-embed:
     specifier: ^1.0.0
     version: 1.0.0
+  mind-elixir:
+    specifier: ^4.0.5
+    version: 4.0.5
   pdfjs-dist:
     specifier: ^2.6.347
     version: 2.6.347
@@ -6439,6 +6442,10 @@ packages:
     resolution: {integrity: sha512-+j7SSye/hablu66K/jjeyPmk6WL8RoXfeZ+MMn37vSNDGuaWY/5wm10LpSpxAHX4kNoEwkTWYHba8ePVip+Hqg==}
     dependencies:
       mime-db: 1.52.0
+    dev: false
+
+  /mind-elixir@4.0.5:
+    resolution: {integrity: sha512-zFYNabpchCY468d/vqo68hnhP+VDN47uPyJJ4dYlkqvL7fomRlo/WJinYgH+Rjt5vFJVLEMBtFsv5fizAC4ZYg==}
     dev: false
 
   /mini-css-extract-plugin@2.7.6(webpack@5.88.2):

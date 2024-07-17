@@ -8,7 +8,6 @@
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 Vue.use(VueRouter)
 
@@ -16,8 +15,13 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView,
-    redirect: '/echart-1'
+    redirect: '/mind-elixir'
+  },
+  {
+    // echart图表1
+    path: '/mind-elixir',
+    name: 'MindElixir',
+    component: () => import('@/views/mindElixir/index')
   },
   {
     // echart图表1
@@ -46,7 +50,7 @@ const routes = [
   {
     // 自定义md编辑
     path: '/md-edit_2',
-    name: 'mdEdit2',
+    name: 'mdEdit22',
     component: () => import('@/views/md-edit2/index')
   },
   {
