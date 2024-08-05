@@ -15,10 +15,16 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/mind-elixir'
+    redirect: '/antv-g6'
   },
   {
-    // echart图表1
+    // @antv/g6 图表
+    path: '/antv-g6',
+    name: 'AntvG6',
+    component: () => import('@/views/antv-g6/index')
+  },
+  {
+    // mind-elixir 图表
     path: '/mind-elixir',
     name: 'MindElixir',
     component: () => import('@/views/mindElixir/index')
