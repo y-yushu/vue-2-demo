@@ -18,6 +18,12 @@ const routes = [
     redirect: '/antv-g6'
   },
   {
+    // 测试路由跳转
+    path: '/test/:id?',
+    name: 'TestPage',
+    component: () => import('@/views/test/index')
+  },
+  {
     // @antv/g6 图表
     path: '/antv-g6',
     name: 'AntvG6',
