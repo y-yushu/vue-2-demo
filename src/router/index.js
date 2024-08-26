@@ -15,7 +15,13 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/antv-g6'
+    redirect: '/three'
+  },
+  {
+    // three 联系
+    path: '/three',
+    name: 'ThreePage',
+    component: () => import('@/views/three/index')
   },
   {
     // 测试路由跳转
