@@ -6,9 +6,7 @@
 
 <script>
 import * as THREE from 'three'
-import { WebGLRenderer, PCFShadowMap, Scene, PerspectiveCamera, AmbientLight, HemisphereLight, DirectionalLight } from 'three'
-
-// import ImageMap from '../../assets/threeImage/map.png'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 
 export default {
   name: 'ThreePage',
@@ -16,57 +14,55 @@ export default {
     return {}
   },
   mounted() {
-    console.log('THREE', THREE)
     this.init()
   },
   methods: {
     init() {
+      // 操作元素
       const canvas = document.getElementById('webglcanvas')
       const width = canvas.offsetWidth
       const height = canvas.offsetHeight
-      // 渲染器
-      const renderer = new WebGLRenderer({
-        antialias: true,
-        alpha: true
-      })
-      renderer.shadowMap.enabled = false
-      renderer.shadowMap.type = PCFShadowMap
+      // 创建相机、元素、渲染器
+      const scene = new THREE.Scene()
+      scene.background = new THREE.Color(0x050505)
+      const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+      camera.position.z = 5
+      const renderer = new THREE.WebGLRenderer()
       renderer.setSize(width, height)
-      renderer.setPixelRatio(window.devicePixelRatio)
-      console.log(width, height)
-      // 元素容器
-      const scene = new Scene()
-      // 相机
-      const camera = new PerspectiveCamera(45, width / height, 0.1, 100000)
-      camera.position.set(-270, 680, -900)
-      camera.lookAt(0, 0, 0)
-      // 初始化光源
-      // 环境光
-      const ambientLight = new AmbientLight(0xcccccc, 0.4)
-      scene.add(ambientLight)
-      // 平行光1
-      const directionalLight = new DirectionalLight(0xffffff, 0.2)
-      directionalLight.position.set(1, 0.1, 0).normalize()
-      scene.add(directionalLight)
-      // 平行光2
-      const directionalLight2 = new DirectionalLight(0xff2ffff, 0.2)
-      directionalLight2.position.set(1, 0.1, 0.1).normalize()
-      scene.add(directionalLight2)
-      // 平行光3
-      const directionalLight3 = new DirectionalLight(0xffffff)
-      directionalLight3.position.set(1, 500, -20)
-      directionalLight3.castShadow = true
-      directionalLight3.shadow.camera.top = 18
-      directionalLight3.shadow.camera.bottom = -10
-      directionalLight3.shadow.camera.left = -52
-      directionalLight3.shadow.camera.right = 12
-      scene.add(directionalLight3)
-      // 半球光
-      const hemiLight = new HemisphereLight(0xffffff, 0x444444, 0.2)
-      hemiLight.position.set(0, 1, 0)
-      scene.add(hemiLight)
+      canvas.appendChild(renderer.domElement)
+
+      // 光源
+      const light = new THREE.AmbientLight(0xffffff)
+      scene.add(light)
+
       // 渲染
-      renderer.render(scene, camera)
+      const loader = new GLTFLoader()
+      console.log('loader', loader)
+      loader.load(
+        // 资源URL
+        'static/duck/duck.gltf',
+        // 'static/turbine01/scene.gltf',
+        // 当资源加载时调用
+        function (gltf) {
+          console.log('gltf.scen', gltf.scene)
+          scene.add(gltf.scene)
+          renderer.render(scene, camera)
+
+          // gltf.animations // Array<THREE.AnimationClip>
+          // gltf.scene // THREE.Group
+          // gltf.scenes // Array<THREE.Group>
+          // gltf.cameras // Array<THREE.Camera>
+          // gltf.asset // Object
+        },
+        // 加载过程中调用
+        function (xhr) {
+          console.log('加载进度：', xhr.loaded / xhr.total)
+        },
+        // 当加载有错误时调用
+        function (error) {
+          console.log('[加载错误]', error)
+        }
+      )
     }
   }
 }
@@ -74,11 +70,12 @@ export default {
 
 <style lang="less" scoped>
 .three-page {
+  position: relative;
   padding: 30px;
 }
 #webglcanvas {
+  position: relative;
   width: 100%;
   aspect-ratio: 3 / 1;
-  background: pink;
 }
 </style>
