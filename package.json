@@ -28,6 +28,7 @@
     "register-service-worker": "^1.7.2",
     "snabbdom": "^3.5.1",
     "three": "^0.167.1",
+    "three-nebula": "^10.0.3",
     "turndown": "^7.2.0",
     "vcolorpicker": "^1.1.0",
     "vditor": "^3.10.4",
