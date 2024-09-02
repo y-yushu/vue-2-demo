@@ -1,30 +1,32 @@
 <template>
   <div class="three-page">
     <div id="webglcanvas"></div>
+    <button @click="test1">测试1</button>
   </div>
 </template>
 
 <script>
 import * as THREE from 'three'
-// import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import {
-  System,
-  SpriteRenderer,
-  Emitter,
-  Rate,
-  Span,
-  Position,
-  Mass,
-  Radius,
-  Life,
-  RadialVelocity,
-  Vector3D,
-  Alpha,
-  Scale,
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import ParticleSystem, {
+  Body,
   Color,
-  BoxZone
+  Emitter,
+  Life,
+  Mass,
+  Position,
+  RadialVelocity,
+  RandomDrift,
+  Rate,
+  Scale,
+  Span,
+  SphereZone,
+  SpriteRenderer,
+  Vector3D,
+  ease
 } from 'three-nebula'
+import dot from '../../assets/dot.png'
 
 let scene = null,
   camera = null,
@@ -33,111 +35,194 @@ let scene = null,
 export default {
   name: 'ThreePage',
   data() {
-    return {}
+    return {
+      ismove: false
+    }
   },
   mounted() {
-    this.init()
+    this.creatBasics()
   },
   methods: {
-    init() {
+    // 创建 场景、相机和渲染器
+    creatBasics() {
       // 操作元素
-      const canvas = document.getElementById('webglcanvas')
-      const width = canvas.offsetWidth
-      const height = canvas.offsetHeight
-      // 创建相机、元素、渲染器
+      const webglcanvas = document.getElementById('webglcanvas')
+      const width = webglcanvas.offsetWidth
+      const height = webglcanvas.offsetHeight
+      // 设置场景、相机和渲染器
       scene = new THREE.Scene()
-      scene.background = new THREE.Color(0x050505)
+      scene.background = new THREE.Color(0x000033)
       camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
-      camera.position.z = 20
       renderer = new THREE.WebGLRenderer()
-      this.renderer = renderer
       renderer.setSize(width, height)
-      canvas.appendChild(renderer.domElement)
+      webglcanvas.appendChild(renderer.domElement)
+      Promise.all([this.creatJ16(), this.creatAircraftCarrier()]).then(funcs => {
+        const animate = () => {
+          requestAnimationFrame(animate)
+          funcs.forEach(func => func && func())
+          renderer.render(scene, camera)
+        }
+        animate()
+      })
+    },
+    // 创建j16飞机
+    creatJ16() {
+      return new Promise(call => {
+        camera.position.z = 200
 
-      // 创建粒子系统
-      const particleSystem = new System()
+        const createSprite = () => {
+          const map = new THREE.TextureLoader().load(dot)
+          const material = new THREE.SpriteMaterial({
+            map: map,
+            color: 0xffaa00, // 更暖的橙色
+            blending: THREE.AdditiveBlending,
+            fog: true
+          })
+          return new THREE.Sprite(material)
+        }
 
-      // 创建发射器
-      const emitter = new Emitter()
-      // 配置发射器
-      emitter
-        .setRate(new Rate(new Span(4, 16), new Span(0.01)))
-        .setInitializers([
-          new Position(new BoxZone(10)),
-          new Mass(1),
-          new Radius(1, 4),
-          new Life(1, 3),
-          new RadialVelocity(45, new Vector3D(0, 1, 0), 180)
-        ])
-        .setBehaviours([new Alpha(1, 0), new Scale(1, 0.5), new Color(new THREE.Color('#4F1500'), new THREE.Color('#0029FF'))])
-        .setPosition({ x: 0, y: 0, z: -2 })
-      // 将发射器添加到粒子系统
-      particleSystem.addEmitter(emitter)
-      // 创建渲染器
-      const smokeRenderer = new SpriteRenderer(scene, THREE)
-      particleSystem.addRenderer(smokeRenderer)
+        const createEmitter = pos => {
+          const emitter = new Emitter()
+          return (
+            emitter
+              // 设置粒子的发射率：每秒发射200-300个粒子，每次发射的时间间隔为0.01-0.02秒
+              .setRate(new Rate(new Span(200, 300), new Span(0.01, 0.02)))
+              .addInitializers([
+                // 设置粒子的外观（使用createSprite函数创建的精灵）
+                new Body(createSprite()),
+                // 设置粒子的质量（影响某些物理行为）
+                new Mass(1),
+                // 设置粒子的生命周期为0.1到0.3秒
+                new Life(0.1, 0.3),
+                // 设置粒子的初始位置在半径为0.5的球体区域内
+                new Position(new SphereZone(0.5)),
+                // 设置粒子的初始速度：速度大小为10-20，方向为(0,0,-1)，即向后喷射
+                new RadialVelocity(new Span(10, 20), new Vector3D(-1, 0, 0), 0)
+              ])
+              .addBehaviours([
+                // 设置粒子的缩放行为：初始大小为0.1-0.3，结束时缩小到0
+                new Scale(new Span(0.1, 0.3), 0),
+                // 设置粒子的颜色变化：从橙色(#ff9933)渐变到红色(#ff0000)和深红(#cc3300)
+                new Color('#ff9933', ['#ff0000', '#cc3300'], Infinity, ease.easeOutQuart),
+                // 添加轻微的随机漂移，使运动看起来更自然
+                new RandomDrift(0.1, 0.1, 0.1, 0.05)
+              ])
+              // 设置发射器的位置，这里是相对于粒子系统的本地坐标
+              .setPosition(pos)
+              .emit()
+          )
+        }
+        // 创建一个组来包含模型和粒子效果
+        const groupModelAndParticles = new THREE.Group()
+        scene.add(groupModelAndParticles)
 
-      // 添加光源
-      function setupAllAroundLighting(scene) {
-        // 添加环境光
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1)
-        scene.add(ambientLight)
+        const system = new ParticleSystem()
 
-        // 添加多个定向光源
-        const directions = [new THREE.Vector3(1, 1, 1), new THREE.Vector3(-1, -1, -1), new THREE.Vector3(-1, 1, 1), new THREE.Vector3(1, -1, -1)]
+        const position1 = {
+          x: -16.8,
+          y: 2.1,
+          z: -0.3
+        }
+        const position2 = {
+          x: -16.8,
+          y: 2.1,
+          z: -3.5
+        }
 
-        directions.forEach(direction => {
-          const directionalLight = new THREE.DirectionalLight(0xffffff, 5)
-          directionalLight.position.copy(direction)
-          scene.add(directionalLight)
-        })
-      }
-      setupAllAroundLighting(scene)
+        system.addEmitter(createEmitter(position1)).addRenderer(new SpriteRenderer(groupModelAndParticles, THREE))
+        system.addEmitter(createEmitter(position2)).addRenderer(new SpriteRenderer(groupModelAndParticles, THREE))
 
-      function animate() {
-        requestAnimationFrame(animate)
-        particleSystem.update() // 更新粒子系统
-        renderer.render(scene, camera)
-      }
-      animate()
+        // 添加光源
+        function setupAllAroundLighting(scene) {
+          // 添加环境光
+          const ambientLight = new THREE.AmbientLight(0xffffff, 1)
+          scene.add(ambientLight)
 
-      // function setupOrbitControls(camera, renderer) {
-      //   const controls = new OrbitControls(camera, renderer.domElement)
-      //   // 设置控制器的一些属性
-      //   controls.enableDamping = true // 添加阻尼效果，使动画更平滑
-      //   controls.dampingFactor = 0.05
-      //   controls.screenSpacePanning = false
-      //   controls.minDistance = 1 // 设置相机距离物体的最小距离
-      //   controls.maxDistance = 50 // 设置相机距离物体的最大距离
-      //   // controls.maxPolarAngle = Math.PI / 2 // 限制垂直旋转角度
-      //   return controls
-      // }
-      // const controls = setupOrbitControls(camera, renderer)
-      // // 渲染
-      // const loader = new GLTFLoader()
-      // loader.load(
-      //   // 'static/turbine01/scene.gltf',
-      //   'static/shenyang_j16_hidden_dragon/scene.gltf',
-      //   function (gltf) {
-      //     console.log('gltf.scene', gltf.scene)
-      //     scene.add(gltf.scene)
-      //     renderer.render(scene, camera)
-      //     // 在您的动画循环中更新控制器
-      //     function animate() {
-      //       requestAnimationFrame(animate)
-      //       controls.update() // 更新控制器
-      //       particleSystem.update() // 更新粒子系统
-      //       renderer.render(scene, camera)
-      //     }
-      //     animate()
-      //   },
-      //   function (xhr) {
-      //     console.log('加载进度：', xhr.loaded / xhr.total)
-      //   },
-      //   function (error) {
-      //     console.log('[加载错误]', error)
-      //   }
-      // )
+          // 添加多个定向光源
+          const directions = [new THREE.Vector3(1, 1, 1), new THREE.Vector3(-1, -1, -1), new THREE.Vector3(-1, 1, 1), new THREE.Vector3(1, -1, -1)]
+
+          directions.forEach(direction => {
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 5)
+            directionalLight.position.copy(direction)
+            scene.add(directionalLight)
+          })
+        }
+        setupAllAroundLighting(scene)
+
+        function setupOrbitControls(camera, renderer) {
+          const controls = new OrbitControls(camera, renderer.domElement)
+          // 设置控制器的一些属性
+          controls.enableDamping = true // 添加阻尼效果，使动画更平滑
+          controls.dampingFactor = 0.05
+          controls.screenSpacePanning = false
+          controls.minDistance = 1 // 设置相机距离物体的最小距离
+          controls.maxDistance = 2000 // 设置相机距离物体的最大距离
+          // controls.maxPolarAngle = Math.PI / 2 // 限制垂直旋转角度
+          return controls
+        }
+        const controls = setupOrbitControls(camera, renderer)
+
+        // 渲染
+        const loader = new GLTFLoader()
+        loader.load(
+          'static/shenyang_j16_hidden_dragon/scene.gltf',
+          gltf => {
+            console.log('gltf.scene', gltf.scene)
+            groupModelAndParticles.add(gltf.scene)
+            // scene.add(gltf.scene)
+            renderer.render(scene, camera)
+            // // 在您的动画循环中更新控制器
+            // const animate = () => {
+            //   requestAnimationFrame(animate)
+            //   // 位置移动
+            //   if (this.ismove && groupModelAndParticles.position.x < 200) {
+            //     groupModelAndParticles.position.x += 0.5
+            //   }
+            //   controls.update() // 更新控制器
+            //   system.update() // 更新粒子系统
+            //   renderer.render(scene, camera)
+            // }
+            // animate()
+            call(() => {
+              controls.update() // 更新控制器
+              system.update() // 更新粒子系统
+            })
+          },
+          function (xhr) {
+            console.log('加载进度：', xhr.loaded / xhr.total)
+          },
+          function (error) {
+            console.log('[加载错误]', error)
+          }
+        )
+      })
+    },
+    // 创建航母
+    creatAircraftCarrier() {
+      return new Promise(call => {
+        // 渲染
+        const loader = new GLTFLoader()
+        loader.load(
+          'static/aircraft_carrier/scene.gltf',
+          gltf => {
+            console.log('gltf.scene', gltf.scene)
+            scene.add(gltf.scene)
+            renderer.render(scene, camera)
+            call()
+          },
+          function (xhr) {
+            console.log('加载进度：', xhr.loaded / xhr.total)
+          },
+          function (error) {
+            console.log('[加载错误]', error)
+          }
+        )
+      })
+    },
+    runAnimate() {},
+    test1() {
+      // this.ismove = !this.ismove
+      console.log('camera.position', camera.position)
     }
   }
 }
