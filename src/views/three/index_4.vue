@@ -38,12 +38,8 @@ import dot from '../../assets/dot.png'
 
 let scene = null,
   camera = null,
-  renderer = null
-let models2 = null // 飞机模型 -- 组:包括飞机/粒子效果/导弹
-let ship = null // 船模型 == 飞机起飞后调整视角时隐藏
-let air = null // 飞机本体
-let missile2 = null // 第二枚导弹 -- 它需要做动画,所以单独列了出来
-let models3 = null // 导弹模型 -- 组:包括第二枚导弹/导弹的粒子效果
+  renderer = null,
+  models2 = null // 飞机模型
 let cameraLookAt = new THREE.Vector3() // 相机目标视角
 // 位置1
 const posi1 = {
@@ -76,25 +72,17 @@ const posi6 = {
   rotation: new THREE.Euler(0, -3.14, 0)
 }
 console.log('平稳飞行', posi6)
-const posi7 = {
-  position: new THREE.Vector3(-540, 20, -5),
-  rotation: new THREE.Euler(0, -3.14, 0)
-}
-console.log('导弹目标', posi7)
 // 执行方法
 let animateFunc = {}
+console.log('animateFunc', animateFunc)
 
 export default {
   name: 'ThreePage',
   data() {
     return {
-      /**
-       * 动画视角步骤
-       * 1 从甲板起飞
-       * 2 平稳飞行
-       */
+      transitionStartTime: null,
       animateStep: 1,
-      step1Time: null
+      stepTime: null
     }
   },
   mounted() {
@@ -115,9 +103,6 @@ export default {
       camera.position.x = -110.85
       camera.position.y = 99.26
       camera.position.z = 133.63
-      // camera.position.x = 0
-      // camera.position.y = 0
-      // camera.position.z = -10
       renderer = new THREE.WebGLRenderer()
       renderer.setSize(width, height)
       webglcanvas.appendChild(renderer.domElement)
@@ -150,20 +135,12 @@ export default {
         return controls
       }
       const controls = setupOrbitControls(camera, renderer)
-      // 创建一个组来包含模型和粒子效果
-      models2 = new THREE.Group()
-      scene.add(models2)
-      models3 = new THREE.Group()
-      scene.add(models3)
-      models3.scale.set(0.8, 0.8, 0.8) // 为了后续导弹大小不变,设置相同的缩放
       // 引入元素
-      await Promise.all([this.createWaterSurface(), this.creatAircraftCarrier(), this.creatJ16(), this.creatAirMissile()])
-      // await Promise.all([this.creatTest()])
+      await Promise.all([this.createWaterSurface(), this.creatAircraftCarrier(), this.creatJ16()])
       renderer.render(scene, camera)
       const animate = () => {
         requestAnimationFrame(animate)
         controls.target.copy(cameraLookAt)
-        // controls.target.copy(models2.position)
         controls.update() // 更新控制器
         // 动画
         for (const key in animateFunc) {
@@ -173,122 +150,18 @@ export default {
       }
       animate()
     },
-    // 测试创建导弹粒子效果
-    creatTest() {
-      return new Promise(resolve => {
-        // 渲染
-        const loader = new GLTFLoader()
-        loader.load(
-          'static/game_ready_low_poly_aim-120/scene.gltf',
-          gltf => {
-            const model1 = gltf.scene.clone()
-            model1.scale.set(1.8, 1.8, 1.8)
-            models3.add(model1)
-
-            const createSprite = () => {
-              const map = new THREE.TextureLoader().load(dot)
-              const material = new THREE.SpriteMaterial({
-                map: map,
-                color: 0xffaa00, // 更暖的橙色
-                blending: THREE.AdditiveBlending,
-                fog: true
-              })
-              return new THREE.Sprite(material)
-            }
-            const createEmitter = pos => {
-              const emitter = new Emitter()
-              return (
-                emitter
-                  // 设置粒子的发射率：每秒发射200-300个粒子，每次发射的时间间隔为0.01-0.02秒
-                  .setRate(new Rate(new Span(200, 300), new Span(0.01, 0.02)))
-                  .addInitializers([
-                    // 设置粒子的外观（使用createSprite函数创建的精灵）
-                    new Body(createSprite()),
-                    // 设置粒子的质量（影响某些物理行为）
-                    new Mass(1),
-                    // 设置粒子的生命周期为0.1到0.3秒
-                    new Life(0.1, 0.3),
-                    // 设置粒子的初始位置在半径为0.5的球体区域内
-                    new Position(new SphereZone(0.5)),
-                    // 设置粒子的初始速度：速度大小为10-20，方向为(0,0,-1)，即向后喷射
-                    new RadialVelocity(new Span(10, 30), new Vector3D(-1, 0, 0), 0)
-                  ])
-                  .addBehaviours([
-                    // 设置粒子的缩放行为：初始大小为0.1-0.3，结束时缩小到0
-                    new Scale(new Span(0.1, 0.2), 0),
-                    // 设置粒子的颜色变化：从橙色(#ff9933)渐变到红色(#ff0000)和深红(#cc3300)
-                    new Color('#ff9933', ['#ff0000', '#cc3300'], Infinity, ease.easeOutQuart),
-                    // 添加轻微的随机漂移，使运动看起来更自然
-                    new RandomDrift(0.1, 0.1, 0.1, 0.05)
-                  ])
-                  // 设置发射器的位置，这里是相对于粒子系统的本地坐标
-                  .setPosition(pos)
-                  .emit()
-              )
-            }
-            const system = new ParticleSystem()
-            const position1 = {
-              x: -3.2,
-              y: 0,
-              z: 0
-            }
-            system.addEmitter(createEmitter(position1)).addRenderer(new SpriteRenderer(models3, THREE))
-            // 添加粒子效果动画
-            animateFunc['ttt_1'] = () => {
-              system.update()
-            }
-            resolve()
-          },
-          function (xhr) {
-            console.log('加载进度：', xhr.loaded / xhr.total)
-          },
-          function (error) {
-            console.log('[加载错误]', error)
-          }
-        )
-      })
-    },
-    // 创建导弹
-    creatAirMissile() {
-      return new Promise(resolve => {
-        // 渲染
-        const loader = new GLTFLoader()
-        loader.load(
-          'static/game_ready_low_poly_aim-120/scene.gltf',
-          gltf => {
-            const model1 = gltf.scene.clone()
-            model1.position.x = -8.5
-            model1.position.y = 2.5
-            model1.position.z = 4
-            model1.scale.set(1.8, 1.8, 1.8)
-            models2.add(model1)
-            missile2 = gltf.scene.clone()
-            missile2.position.x = -8.5
-            missile2.position.y = 2.5
-            missile2.position.z = -8
-            missile2.scale.set(1.8, 1.8, 1.8)
-            models2.add(missile2)
-            resolve()
-          },
-          function (xhr) {
-            console.log('加载进度：', xhr.loaded / xhr.total)
-          },
-          function (error) {
-            console.log('[加载错误]', error)
-          }
-        )
-      })
-    },
     // 创建j16飞机
     creatJ16() {
       return new Promise(resolve => {
+        // 创建一个组来包含模型和粒子效果
+        models2 = new THREE.Group()
+        scene.add(models2)
         // 渲染
         const loader = new GLTFLoader()
         loader.load(
           'static/shenyang_j16_hidden_dragon/scene.gltf',
           gltf => {
-            air = gltf.scene
-            models2.add(air)
+            models2.add(gltf.scene)
             // 调整位置
             models2.position.copy(posi1.position)
             // 调整旋转
@@ -314,12 +187,12 @@ export default {
         loader.load(
           'static/aircraft_carrier/scene.gltf',
           gltf => {
-            ship = gltf.scene
+            const model = gltf.scene
             // 调整位置
-            // ship.position.set(0, -10, -20) // 将模型向下移动10单位，向后移动20单位
+            // model.position.set(0, -10, -20) // 将模型向下移动10单位，向后移动20单位
             // 调整旋转
-            ship.rotation.y = Math.PI / 2 // 旋转90度，使模型朝向正面
-            scene.add(ship)
+            model.rotation.y = Math.PI / 2 // 旋转90度，使模型朝向正面
+            scene.add(model)
             resolve()
           },
           function (xhr) {
@@ -335,7 +208,7 @@ export default {
     createWaterSurface() {
       return new Promise(resolve => {
         // 创建平面几何体
-        const geometry = new THREE.PlaneGeometry(2000, 2000)
+        const geometry = new THREE.PlaneGeometry(1000, 1000)
         // 创建材质
         const material = new THREE.MeshPhongMaterial({
           color: 0x0077be, // 蓝色
@@ -374,18 +247,18 @@ export default {
           const offset = new THREE.Vector3(20, 10, 10)
           const targetPosition = models2.position.clone().add(offset)
           camera.position.lerp(targetPosition, 0.1)
-          // camera.lookAt(models2.position)
+          camera.lookAt(models2.position)
           // 保留当前视角
           startCameraPosition = camera.position
           cameraLookAt = models2.position
         } else if (this.animateStep === 2) {
           const currentTime = Date.now()
-          const elapsedTime = currentTime - this.step1Time
+          const elapsedTime = currentTime - this.stepTime
           step2Progress = Math.min(elapsedTime / step2Duration, 1)
           // 插值计算新的相机位置
           camera.position.lerpVectors(startCameraPosition, defaultCameraPosition, step2Progress)
           camera.lookAt(models2.position)
-          if (step2Progress >= 1) {
+          if (step2Progress === 1) {
             delete animateFunc['view_1']
           }
         }
@@ -600,7 +473,7 @@ export default {
     // 动画7 -- 执行完成 视角移动
     animate7() {
       setTimeout(() => {
-        this.step1Time = Date.now()
+        this.stepTime = Date.now()
         this.animateStep = 2
         this.animate8()
       }, 2000)
@@ -635,135 +508,12 @@ export default {
         models2.rotation.copy(newRotation)
         // 检查动画是否完成
         if (progress === 1) {
+          console.log('动画完成1')
           delete animateFunc['move_4']
-          this.stepThree()
         }
       }
       startAnimation()
       animateFunc['move_4'] = updateModelPosition
-    },
-    // 步骤三 -- 将导弹拆分到其他组,准备粒子效果及移动
-    stepThree() {
-      const worldPosition = missile2.getWorldPosition(new THREE.Vector3())
-      // 移除
-      models2.remove(missile2)
-      // 添加
-      models3.add(missile2)
-      // 改变属性
-      models3.position.copy(worldPosition)
-      models3.rotation.copy(posi6.rotation) // 助理使用“平稳飞行”的角度
-      missile2.position.copy(new THREE.Vector3())
-      missile2.position.copy(new THREE.Euler())
-      setTimeout(() => {
-        this.animate9()
-      }, 500)
-      // 隐藏船
-      scene.remove(ship)
-    },
-    // 动画9 -- 导弹向下落一定距离
-    animate9() {
-      const startPosi = models3.position
-      let endPosi = startPosi.clone()
-      endPosi.x += 5
-      endPosi.y -= 5
-      // 动画参数
-      let animationDuration = 1000 // 动画持续时间（毫秒）
-      let startTime = Date.now()
-      const updateModelPosition = () => {
-        const currentTime = Date.now()
-        const elapsedTime = currentTime - startTime
-        let progress = Math.min(elapsedTime / animationDuration, 1)
-        // 插值计算新的位置
-        const newPosition = new THREE.Vector3().lerpVectors(startPosi, endPosi, progress)
-        // 更新模型的位置和旋转
-        models3.position.copy(newPosition)
-        // 检查动画是否完成
-        if (progress === 1) {
-          delete animateFunc['move_5']
-          this.animate10() // 打火
-          this.animate11() // 起飞
-        }
-      }
-      animateFunc['move_5'] = updateModelPosition
-    },
-    // 动画10 -- 导弹打火
-    animate10() {
-      const createSprite = () => {
-        const map = new THREE.TextureLoader().load(dot)
-        const material = new THREE.SpriteMaterial({
-          map: map,
-          color: 0xffaa00, // 更暖的橙色
-          blending: THREE.AdditiveBlending,
-          fog: true
-        })
-        return new THREE.Sprite(material)
-      }
-      const createEmitter = pos => {
-        const emitter = new Emitter()
-        return (
-          emitter
-            // 设置粒子的发射率：每秒发射200-300个粒子，每次发射的时间间隔为0.01-0.02秒
-            .setRate(new Rate(new Span(200, 300), new Span(0.01, 0.02)))
-            .addInitializers([
-              // 设置粒子的外观（使用createSprite函数创建的精灵）
-              new Body(createSprite()),
-              // 设置粒子的质量（影响某些物理行为）
-              new Mass(1),
-              // 设置粒子的生命周期为0.1到0.3秒
-              new Life(0.1, 0.3),
-              // 设置粒子的初始位置在半径为0.5的球体区域内
-              new Position(new SphereZone(0.5)),
-              // 设置粒子的初始速度：速度大小为10-20，方向为(0,0,-1)，即向后喷射
-              new RadialVelocity(new Span(10, 30), new Vector3D(-1, 0, 0), 0)
-            ])
-            .addBehaviours([
-              // 设置粒子的缩放行为：初始大小为0.1-0.3，结束时缩小到0
-              new Scale(new Span(0.1, 0.2), 0),
-              // 设置粒子的颜色变化：从橙色(#ff9933)渐变到红色(#ff0000)和深红(#cc3300)
-              new Color('#ff9933', ['#ff0000', '#cc3300'], Infinity, ease.easeOutQuart),
-              // 添加轻微的随机漂移，使运动看起来更自然
-              new RandomDrift(0.1, 0.1, 0.1, 0.05)
-            ])
-            // 设置发射器的位置，这里是相对于粒子系统的本地坐标
-            .setPosition(pos)
-            .emit()
-        )
-      }
-      const system = new ParticleSystem()
-      const position3 = {
-        x: -3.2,
-        y: 0,
-        z: 0
-      }
-      system.addEmitter(createEmitter(position3)).addRenderer(new SpriteRenderer(models3, THREE))
-      // 添加粒子效果动画
-      animateFunc['lizi_2'] = () => {
-        system.update()
-      }
-    },
-    // 动画11 -- 导弹起飞
-    animate11() {
-      const startPosi = models3.position
-      const endPosi = posi7.position
-      // 动画参数
-      let animationDuration = 20000 // 动画持续时间（毫秒）
-      let startTime = Date.now()
-      const updateModelPosition = () => {
-        const currentTime = Date.now()
-        const elapsedTime = currentTime - startTime
-        let progress = Math.min(elapsedTime / animationDuration, 1)
-        // 插值计算新的位置
-        const newPosition = new THREE.Vector3().lerpVectors(startPosi, endPosi, progress)
-        // 更新模型的位置和旋转
-        models3.position.copy(newPosition)
-        // 检查动画是否完成
-        if (progress === 1) {
-          delete animateFunc['move_6']
-          console.log('动画完成')
-        }
-      }
-      animateFunc['move_6'] = updateModelPosition
-      // this.animateStep = 3
     }
   }
 }
