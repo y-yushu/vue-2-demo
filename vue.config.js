@@ -15,6 +15,13 @@ module.exports = defineConfig({
         pathRewrite: {
           '^/api': ''
         }
+      },
+      '/map': {
+        target: `http://192.168.78.64:18086`,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/map': ''
+        }
       }
     },
     client: {
