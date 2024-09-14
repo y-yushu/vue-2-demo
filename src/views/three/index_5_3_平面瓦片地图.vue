@@ -17,13 +17,11 @@ export default {
   name: 'ThreePage',
   data() {
     return {
-      minZoom: 4, // 最小
+      minZoom: 4,
       maxZoom: 5,
       currentZoom: 4,
-      centerLat: 24,
-      centerLon: 120,
-      tileCache: new Map(),
-      visibleTiles: new Set()
+      centerLat: 24, // 台湾海峡纬度
+      centerLon: 120 // 台湾海峡经度
     }
   },
   mounted() {
@@ -56,88 +54,70 @@ export default {
         MIDDLE: THREE.MOUSE.DOLLY,
         RIGHT: THREE.MOUSE.PAN
       }
+
       controls.addEventListener('change', this.onControlsChange)
       controls.addEventListener('end', this.onControlsEnd)
+
       scene.add(tilesGroup)
 
       this.updateTiles()
+
       window.addEventListener('resize', this.onWindowResize)
+
       this.animate()
     },
     animate() {
       requestAnimationFrame(this.animate)
-      // if (TWEEN) TWEEN.update()
       controls.update()
       renderer.render(scene, camera)
     },
     updateTiles() {
+      // 清除现有瓦片
+      while (tilesGroup.children.length > 0) {
+        const tile = tilesGroup.children[0]
+        tilesGroup.remove(tile)
+        if (tile.material.map) tile.material.map.dispose()
+        tile.material.dispose()
+        tile.geometry.dispose()
+      }
+
       const [centerX, centerY] = this.latLonToTile(this.centerLat, this.centerLon, this.currentZoom)
+
       const tilesX = Math.ceil(renderer.domElement.width / tileSize) + 1
       const tilesY = Math.ceil(renderer.domElement.height / tileSize) + 1
+
       const maxTiles = Math.pow(2, this.currentZoom)
-      const newVisibleTiles = new Set()
 
       for (let x = -Math.floor(tilesX / 2); x <= Math.floor(tilesX / 2); x++) {
         for (let y = -Math.floor(tilesY / 2); y <= Math.floor(tilesY / 2); y++) {
           const tileX = (centerX + x + maxTiles) % maxTiles
           const tileY = (centerY + y + maxTiles) % maxTiles
-          const tileKey = `${this.currentZoom},${tileX},${tileY}`
-          newVisibleTiles.add(tileKey)
-
-          if (!this.visibleTiles.has(tileKey)) {
-            this.loadTile(tileX, tileY, this.currentZoom, x, y)
-          }
+          this.loadTile(tileX, tileY, this.currentZoom, x, y)
         }
       }
-
-      // 移除不再可见的瓦片
-      this.visibleTiles.forEach(tileKey => {
-        if (!newVisibleTiles.has(tileKey)) {
-          const tile = this.tileCache.get(tileKey)
-          console.log('tile', tile)
-          if (tile) {
-            tilesGroup.remove(tile)
-          }
-        }
-      })
-      console.log('newVisibleTiles', newVisibleTiles)
-
-      this.visibleTiles = newVisibleTiles
     },
     loadTile(x, y, zoom, offsetX, offsetY) {
-      const tileKey = `${zoom},${x},${y}`
-      if (this.tileCache.has(tileKey)) {
-        const tile = this.tileCache.get(tileKey)
-        tile.position.set(offsetX * tileSize, -offsetY * tileSize, 0)
-        if (!tilesGroup.children.includes(tile)) {
+      const loader = new THREE.TextureLoader()
+      const url = `/map/terrain/${zoom}/${x}/${y}.png`
+
+      loader.load(
+        url,
+        texture => {
+          const material = new THREE.MeshBasicMaterial({ map: texture })
+          const geometry = new THREE.PlaneGeometry(tileSize, tileSize)
+          const tile = new THREE.Mesh(geometry, material)
+
+          tile.position.set(offsetX * tileSize, -offsetY * tileSize, 0)
+
           tilesGroup.add(tile)
+        },
+        undefined,
+        error => {
+          console.error('An error happened while loading the tile:', error)
+          // 可以在这里添加加载失败的处理逻辑，比如显示一个占位图片
         }
-      } else {
-        const loader = new THREE.TextureLoader()
-        const url = `/map/terrain/${zoom}/${x}/${y}.png`
-
-        loader.load(
-          url,
-          texture => {
-            const material = new THREE.MeshBasicMaterial({
-              map: texture,
-              transparent: true
-            })
-            const geometry = new THREE.PlaneGeometry(tileSize, tileSize)
-            const tile = new THREE.Mesh(geometry, material)
-
-            tile.position.set(offsetX * tileSize, -offsetY * tileSize, 0)
-            this.tileCache.set(tileKey, tile)
-            tilesGroup.add(tile)
-          },
-          undefined,
-          error => {
-            console.error('An error happened while loading the tile:', error)
-          }
-        )
-      }
+      )
     },
-
     latLonToTile(lat, lon, zoom) {
       const x = Math.floor(((lon + 180) / 360) * Math.pow(2, zoom))
       const y = Math.floor(((1 - Math.log(Math.tan((lat * Math.PI) / 180) + 1 / Math.cos((lat * Math.PI) / 180)) / Math.PI) / 2) * Math.pow(2, zoom))
@@ -147,9 +127,8 @@ export default {
       const newZoom = this.calculateZoom()
       if (newZoom !== this.currentZoom) {
         this.currentZoom = Math.max(this.minZoom, Math.min(this.maxZoom, newZoom))
-        this.clearTileCache()
+        this.updateTiles()
       }
-      this.updateTiles()
     },
     onControlsEnd() {
       this.updateTiles()
@@ -172,18 +151,6 @@ export default {
 
       renderer.setSize(width, height)
       this.updateTiles()
-    },
-    clearTileCache() {
-      this.tileCache.forEach(tile => {
-        if (tile.material.map) tile.material.map.dispose()
-        tile.material.dispose()
-        tile.geometry.dispose()
-      })
-      this.tileCache.clear()
-      this.visibleTiles.clear()
-      while (tilesGroup.children.length > 0) {
-        tilesGroup.remove(tilesGroup.children[0])
-      }
     }
   }
 }
