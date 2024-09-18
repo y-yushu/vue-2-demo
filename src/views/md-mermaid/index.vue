@@ -17,9 +17,11 @@ import createLineNumbertPlugin from '@kangc/v-md-editor/lib/plugins/line-number/
 // 代码一键复制
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index'
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css'
+import createKatexPlugin from '@kangc/v-md-editor/lib/plugins/katex/cdn'
 VMdPreview.use(vuepressTheme, { Prism })
   .use(createLineNumbertPlugin())
   .use(createCopyCodePlugin())
+  .use(createKatexPlugin())
   .extendMarkdown(md => {
     console.log('md.block.ruler', md.block.ruler)
 
@@ -104,12 +106,17 @@ const arr = [1,2,3,4]
 
 `
 
+const mock2 =
+  '为了计算这个问题，我们首先需要确定每只猫每天的捕鼠效率。\n因此，在9天内，每只猫可以捉到的老鼠数为：\n$$[ \\text{每只猫9天内捉到的老鼠数} = 9 \\times \\frac{1}{3} = 3]$$'
+console.log('mock2', mock2)
+
 export default {
   name: 'MdEdit1',
   components: { VMdPreview },
   data() {
     return {
-      value1: '# 准备',
+      // value1: '# 准备',
+      value1: mock2,
       ind: 0,
       chan: false,
       timer: null
