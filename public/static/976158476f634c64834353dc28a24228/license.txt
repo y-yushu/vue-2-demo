@@ -1,0 +1,8 @@
+Model Information:
+* title:	[OD]Mi-17-1SKM 米171改进型运输直升机
+* source:	https://sketchfab.com/3d-models/odmi-17-1skm-171-976158476f634c64834353dc28a24228
+* author:	EXcalibur117 (https://sketchfab.com/EXcalibur117)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

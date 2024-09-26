@@ -15,10 +15,16 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/three'
+    redirect: '/three-2'
   },
   {
-    // three 联系
+    // three 练习2
+    path: '/three-2',
+    name: 'ThreePage2',
+    component: () => import('@/views/three_2/index')
+  },
+  {
+    // three 练习
     path: '/three',
     name: 'ThreePage',
     component: () => import('@/views/three/index')

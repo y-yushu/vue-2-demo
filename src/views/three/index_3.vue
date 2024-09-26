@@ -72,8 +72,6 @@ export default {
       const loader = new GLTFLoader()
       loader.load(
         // 资源URL
-        // 'static/duck/duck.gltf',
-        // 'static/turbine01/scene.gltf',
         'static/shenyang_j16_hidden_dragon/scene.gltf',
         // 当资源加载时调用
         function (gltf) {
