@@ -4,6 +4,8 @@
     <div style="text-align: center; padding-top: 1rem">
       <button @click="huoquweizhi">获取位置</button>
       <br />
+      <button @click="isSpin = true">开始旋转</button>
+      <button @click="isSpin = false">停止旋转</button>
     </div>
   </div>
 </template>
@@ -44,13 +46,8 @@ export default {
   name: 'ThreePage2',
   data() {
     return {
-      /**
-       * 动画视角步骤
-       * 1 从甲板起飞
-       * 2 平稳飞行
-       */
-      animateStep: 1,
-      step1Time: null
+      // 飞机机翼动画
+      isSpin: false
     }
   },
   mounted() {
@@ -75,9 +72,9 @@ export default {
       directionalLight.position.set(100, 100, 100).normalize()
       scene.add(directionalLight)
       // 设置相机视角
-      camera.position.x = 15
-      camera.position.y = 15
-      camera.position.z = 15
+      camera.position.x = 8.444
+      camera.position.y = 7.244
+      camera.position.z = -4.588
       renderer = new THREE.WebGLRenderer()
       renderer.setSize(width, height)
       webglcanvas.appendChild(renderer.domElement)
@@ -143,29 +140,39 @@ export default {
         loader.load(
           'static/976158476f634c64834353dc28a24228/scene.gltf',
           gltf => {
-            // 统一处理的组
-            const group = new THREE.Group()
+            const groupAll = new THREE.Group()
             const helicopter = gltf.scene
             console.log('---------------------------------\n', '模型', gltf)
+            // ------------------------ 旋翼及旋翼动画
+            const rotorGroup = new THREE.Group() // 旋翼组
             // 获取旋翼
             const rotorWing = helicopter.getObjectByName('Object_5')
             rotorWing.material = rotorWing.material.clone()
             rotorWing.material.color.set(0x3742fa)
-            // // 创建旋转中心
-            // const pivot = new THREE.Object3D()
-            // pivot.position.set(0, 0, 1) // 设置旋转中心为 Z=1
-            // group.add(pivot) // 将 pivot 添加到 group
-            // // 将旋翼添加到空对象
-            // pivot.add(rotorWing)
-            // 添加旋翼动画
-            const rotateSpeed = 0.1
+            // 将尾翼从其原始父对象中移除
+            rotorWing.parent.remove(rotorWing)
+            const rotorWing2 = rotorWing.clone()
+            // 设置立方体的位置，以便包裹旋翼
+            const rotorBoundingBox = new THREE.Box3().setFromObject(rotorWing2) // 获取旋翼的边界框
+            const center = rotorBoundingBox.getCenter(new THREE.Vector3()) // 获取中心点
+            rotorWing2.position.set(-center.x + 0.73, -center.y - 0.2, -center.z - 0.4)
+            rotorGroup.rotation.x = -Math.PI / 2
+            rotorGroup.position.y = center.z
+            rotorGroup.position.x = center.x - 0.73
+            const rotateSpeed = -0.05
             animateFunc['take_off'] = () => {
-              rotorWing.rotation.z += rotateSpeed
-            //   if (rotorWing.rotation.z >= 5) delete animateFunc['take_off']
+              if (this.isSpin) rotorGroup.rotation.z += rotateSpeed
             }
-            // 添加模型
-            group.add(helicopter)
-            scene.add(group)
+            // 添加模型 -- 旋翼
+            rotorGroup.add(rotorWing2)
+            groupAll.add(rotorGroup)
+            // ------------------------ 尾翼及尾翼动画
+            const empennage = helicopter.getObjectByName('Object_9')
+            empennage.material = empennage.material.clone()
+            empennage.material.color.set(0x00b355)
+            // 添加模型 -- 全部
+            groupAll.add(helicopter)
+            scene.add(groupAll)
             resolve()
           },
           function (xhr) {
