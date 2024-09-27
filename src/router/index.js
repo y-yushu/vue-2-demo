@@ -15,7 +15,20 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/three-2'
+    redirect: '/markdown-it-custom'
+  },
+  {
+    // markdown-it-custom 自定义渲染
+    path: '/markdown-it-custom',
+    name: 'MarkdownItCustom',
+    component: () => import('@/views/markdown-it-custom/index')
+  },
+  {
+    // typewriter 打字机
+    // 注：目前看文字输出没问题，但是markdown-it渲染时，会出现问题
+    path: '/typewriter',
+    name: 'Typewriter',
+    component: () => import('@/views/typewriter/index')
   },
   {
     // three 练习2

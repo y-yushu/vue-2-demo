@@ -17,6 +17,7 @@
     "@wangeditor/editor-for-vue": "^1.0.2",
     "@wangeditor/plugin-upload-attachment": "^1.1.0",
     "core-js": "^3.8.3",
+    "diff": "^7.0.0",
     "dom-to-image": "^2.6.0",
     "echarts": "^4.9.0",
     "js-audio-recorder": "^1.0.7",
