@@ -11,17 +11,24 @@
 <script>
 import CuRender from './render.vue'
 
-// const mock = `
-// 你好
-// \`\`\`mermaid
-// {"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}
-// \`\`\`
+const mock = `
+\`\`\`mermaid
+{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}
+\`\`\`
+`
+// const mock = `# 台湾海峡概览
+// @hisw_echarts_start{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}@hisw_echarts_end
 // {"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}
 // `
-const mock = `# 台湾海峡概览
-@hisw_echarts_start{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}@hisw_echarts_end
-{"xAxis":{"type":"category","data":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]},"yAxis":{"type":"value"},"series":[{"data":[150,230,224,218,135,147,260],"type":"line"}]}
-`
+// const mock = `
+// # Hello Markdown
+// Here is a code block
+// \`\`\`javascript
+// function helloWorld() {
+//   console.log('Hello, world!');
+// }
+// \`\`\`
+// `
 
 export default {
   name: 'MarkdownItCustom',

@@ -1,7 +1,7 @@
 import * as echarts from 'echarts'
 
 const innerHtml =
-  '<style>.container{aspect-ratio:16/9;background-color:orange}.chart{height:100%;background-color:greenyellow}</style><div class="container"><div id="chart"class="chart"></div></div>'
+  '<style>.container{aspect-ratio:16/9}.chart{height:100%}</style><div class="container"><div id="chart"class="chart"></div></div>'
 
 class HiswEcharts extends HTMLElement {
   data = null // 数据

@@ -5,6 +5,8 @@
 <script>
 import { DiffDOM } from 'diff-dom'
 import MarkdownIt from 'markdown-it'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/monokai-sublime.css'
 import customTagPlugin from './customTagPlugin'
 
 // markdown 比较算法 渲染
@@ -29,7 +31,12 @@ export default {
   },
   data() {
     return {
-      md: new MarkdownIt(),
+      md: new MarkdownIt({
+        highlight: str => {
+          const highlighted = hljs.highlightAuto(str).value
+          return `<pre><code class="hljs">${highlighted}</code></pre>`
+        }
+      }),
       lastRenderedContent: []
     }
   },
@@ -69,5 +76,3 @@ export default {
   }
 }
 </script>
-
-<style scoped></style>

@@ -1,8 +1,10 @@
 // flexibleCustomTagsPlugin.js
+// 正则解析插件
 import HiswEcharts from './plug-in/hisw-echarts'
+// code解析插件
+import HiswMermaid from './plug-in/hisw-mermaid'
 
 let defaultRender = null
-const Contents = {}
 
 export default function flexibleCustomTagsPlugin(md) {
   const customTags = {
@@ -115,26 +117,18 @@ export default function flexibleCustomTagsPlugin(md) {
   md.renderer.rules.fence = (tokens, idx, options, env, self) => {
     const token = tokens[idx]
     if (['mermaid', 'svg', 'mindmap'].includes(token.info)) {
-      const defaultResult = defaultRender(tokens, idx, options, env, self)
-      const uid = Math.random()
-      Contents[uid] = token.content
+      const name = 'hisw-' + token.info
+      // 正常渲染的元素
+      const children = defaultRender(tokens, idx, options, env, self)
       // 尝试获取已注册的自定义元素
-      const hiswEcharts = customElements.get('hisw-echarts')
-      if (!hiswEcharts) {
-        console.log('注册组件', 'hisw-echarts')
-        customElements.define('hisw-echarts', HiswEcharts)
+      const hiswComponent = customElements.get(name)
+      if (!hiswComponent) {
+        console.log('注册组件', name)
+        if (token.info === 'mermaid') {
+          customElements.define(name, HiswMermaid)
+        }
       }
-      return `<hisw-echarts class="custom-tag">${defaultResult}</hisw-echarts>`
-      //   const customHtml = `
-      //   <div class="mermaid-wrapper">
-      //     ${defaultResult}
-      //     <div class="drawing-line">
-      //       <i class="drawing-button el-icon-view" data-type="mermaid" data-content="${uid}"></i>
-      //     </div>
-      //   </div>
-      // `
-      //   console.log('Mermaid HTML:', customHtml) // 添加这行来检查输出
-      //   return customHtml
+      return `<${name} markdown="${encodeURIComponent(token.content)}">${children}</${name}>`
     } else {
       return defaultRender(tokens, idx, options, env, self)
     }
