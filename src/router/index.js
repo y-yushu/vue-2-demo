@@ -31,6 +31,12 @@ const routes = [
     component: () => import('@/views/typewriter/index')
   },
   {
+    // three 练习3
+    path: '/three-3',
+    name: 'ThreePage3',
+    component: () => import('@/views/three_3/index')
+  },
+  {
     // three 练习2
     path: '/three-2',
     name: 'ThreePage2',
