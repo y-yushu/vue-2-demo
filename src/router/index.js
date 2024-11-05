@@ -15,7 +15,13 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/markdown-it-custom'
+    redirect: '/gaode-map'
+  },
+  {
+    // 高德map
+    path: '/gaode-map',
+    name: 'GaodeMap',
+    component: () => import('@/views/gaode-map/index')
   },
   {
     // markdown-it-custom 自定义渲染
