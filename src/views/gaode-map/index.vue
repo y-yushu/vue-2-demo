@@ -16,7 +16,7 @@ export default {
   mounted() {
     // 安全密钥
     window._AMapSecurityConfig = {
-      securityJsCode: 'ea7db74c576e54a1fe7620b242ad6ab5'
+      securityJsCode: process.env.VUE_APP_AMAP_CODE
     }
     // 动态加载脚本
     const script = document.createElement('script')
@@ -41,27 +41,29 @@ export default {
     init() {
       // eslint-disable-next-line no-undef
       AMapLoader.load({
-        key: '2d22582ce88d0608b1e9ba6ef710d7c8', // 申请好的Web端开发者 Key，调用 load 时必填
-        version: '2.0' // 指定要加载的 JS API 的版本，缺省时默认为 1.4.15
+        key: process.env.VUE_APP_AMAP_KEY,
+        version: '2.0'
       })
         .then(AMap => {
-          map = new AMap.Map('map')
-          console.log('map', map)
-          const marker = new AMap.Marker({
-            position: [116.39, 39.9] //位置
+          map = new AMap.Map('map', {
+            zoom: 14.85,
+            center: [121.922228, 30.896026],
+            mapStyle: 'amap://styles/darkblue'
           })
-          map.add(marker) //添加到地图
+          console.log('map', map)
           const lineArr = [
-            [116.368904, 39.913423],
-            [116.382122, 39.901176],
-            [116.387271, 39.912501],
-            [116.398258, 39.9046]
+            [121.643394, 31.047499],
+            [121.6485, 31.0412],
+            [121.642456, 30.985817],
+            [121.64133, 30.979559]
           ]
           const polyline = new AMap.Polyline({
             path: lineArr, //设置线覆盖物路径
-            strokeColor: '#3366FF', //线颜色
-            strokeWeight: 5, //线宽
-            strokeStyle: 'solid' //线样式
+            strokeColor: '#ffc151', //线颜色
+            strokeWeight: 3, //线宽
+            strokeStyle: 'solid', //线样式
+            cursor: 'pointer',
+            showDir: true
           })
           map.add(polyline)
           polyline.on('click', e => {
@@ -69,6 +71,10 @@ export default {
           })
           map.on('click', e => {
             console.log('e', e)
+          })
+          map.on('zoomchange', e => {
+            console.log('缩放级别改变', e)
+            console.log('当前缩放级别:', map.getZoom())
           })
         })
         .catch(e => {
