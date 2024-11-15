@@ -5,15 +5,36 @@
 </template>
 
 <script>
+import SiteData from '@/assets/map/site-data.json'
+import Dot from '@/assets/map/dot.png'
+import Begin from '@/assets/map/begin.png'
+import End from '@/assets/map/end.png'
 let scriptElement = null
 let map = null
 
 export default {
   name: 'GaodeMap',
   data() {
-    return {}
+    return {
+      paths: []
+    }
   },
   mounted() {
+    // 计算公交路线
+    let paths = []
+    let path1 = []
+    SiteData.forEach(e => {
+      if (e.STATION_MARK === 'B') {
+        path1.push(e)
+      } else if (e.STATION_MARK === 'Z') {
+        path1.push(e)
+      } else if (e.STATION_MARK === 'E') {
+        path1.push(e)
+        paths.push(path1)
+        path1 = []
+      }
+    })
+    this.paths = paths
     // 安全密钥
     window._AMapSecurityConfig = {
       securityJsCode: process.env.VUE_APP_AMAP_CODE
@@ -51,31 +72,81 @@ export default {
             mapStyle: 'amap://styles/darkblue'
           })
           console.log('map', map)
-          const lineArr = [
-            [121.643394, 31.047499],
-            [121.6485, 31.0412],
-            [121.642456, 30.985817],
-            [121.64133, 30.979559]
+          // 公交路线画线
+          this.paths.forEach(e => {
+            const path = e.map(c => [c.LON, c.LAT])
+            const polyline = new AMap.Polyline({
+              path: path,
+              strokeWeight: 2,
+              strokeColor: 'red',
+              lineJoin: 'round'
+            })
+            map.add(polyline)
+          })
+          // 公交站点打点
+          const getStyle = type => {
+            if (type === 'B') return 1
+            if (type === 'E') return 2
+            return 0
+          }
+          const style = [
+            {
+              url: Dot,
+              anchor: new AMap.Pixel(6, 6),
+              size: new AMap.Size(12, 12),
+              zIndex: 3
+            },
+            {
+              url: Begin,
+              anchor: new AMap.Pixel(15, 30),
+              size: new AMap.Size(30, 30),
+              zIndex: 3
+            },
+            {
+              url: End,
+              anchor: new AMap.Pixel(15, 30),
+              size: new AMap.Size(30, 30),
+              zIndex: 3
+            }
           ]
-          const polyline = new AMap.Polyline({
-            path: lineArr, //设置线覆盖物路径
-            strokeColor: '#ffc151', //线颜色
-            strokeWeight: 3, //线宽
-            strokeStyle: 'solid', //线样式
-            cursor: 'pointer',
-            showDir: true
+          const data = SiteData.map(e => ({
+            lnglat: [e.LON, e.LAT],
+            name: e.STATION_NAME,
+            style: getStyle(e.STATION_MARK)
+          }))
+          const massMarks = new AMap.MassMarks(data, {
+            zIndex: 5,
+            zooms: [8, 20],
+            style: style
           })
-          map.add(polyline)
-          polyline.on('click', e => {
-            console.log('2222', e)
+          const infoWindow = new AMap.InfoWindow({
+            offset: new AMap.Pixel(20, 0),
+            isCustom: true,
+            closeWhenClickMap: true,
+            autoMove: true,
+            showShadow: false
           })
-          map.on('click', e => {
-            console.log('e', e)
+          massMarks.on('mouseover', function (e) {
+            const content = `
+              <div style="
+                padding: 4px 8px;
+                background: transparent;
+                color: white;
+                border: none;
+                font-size: 12px;
+                white-space: nowrap;
+                transform: translate(50%, 100%);
+              ">
+                ${e.data.name}
+              </div>
+            `
+            infoWindow.setContent(content)
+            infoWindow.open(map, e.data.lnglat)
           })
-          map.on('zoomchange', e => {
-            console.log('缩放级别改变', e)
-            console.log('当前缩放级别:', map.getZoom())
+          massMarks.on('mouseout', function () {
+            infoWindow.close()
           })
+          massMarks.setMap(map)
         })
         .catch(e => {
           console.error(e) //加载错误提示

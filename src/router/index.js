@@ -18,6 +18,12 @@ const routes = [
     redirect: '/gaode-map'
   },
   {
+    // xlsx解析
+    path: '/xlsx',
+    name: 'Xlsx',
+    component: () => import('@/views/xlsx/index')
+  },
+  {
     // 高德map
     path: '/gaode-map',
     name: 'GaodeMap',
