@@ -15,7 +15,13 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/gaode-map'
+    redirect: '/claude-generate'
+  },
+  {
+    // claude-generate 生成页面测试
+    path: '/claude-generate',
+    name: 'ClaudeGenerate',
+    component: () => import('@/views/claude-generate/index')
   },
   {
     // xlsx解析

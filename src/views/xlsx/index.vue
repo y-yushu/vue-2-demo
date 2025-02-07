@@ -1,179 +1,666 @@
 <template>
   <div class="xlsx-box">
-    <div class="content-container">
-      <div class="button-grid">
-        <button 
-          v-for="index in 20" 
-          :key="index"
-          @click="handleButtonClick(index)"
-          @mousemove="handleMouseMove"
-          @mouseout="handleMouseOut"
-          @click.stop="handleClick"
-          :style="buttonStyle"
-          :class="[clickAnimationClass, `button-${index}`]"
-        >功能 {{index}}</button>
-      </div>
-    </div>
+    <button @click="test">测试</button>
   </div>
 </template>
 
 <script>
-import * as XLSX from 'xlsx'
+// import { gcj02ToWgs84 } from './ttt'
+const mock = [
+  [121.974539, 30.885317],
+  [121.974157, 30.885454],
+  [121.97295, 30.885905],
+  [121.97045, 30.886784],
+  [121.970214, 30.886875],
+  [121.96934, 30.887208],
+  [121.968015, 30.887669],
+  [121.967613, 30.887803],
+  [121.965944, 30.888415],
+  [121.964228, 30.889005],
+  [121.964066, 30.889096],
+  [121.963256, 30.889423],
+  [121.963074, 30.889472],
+  [121.962001, 30.889842],
+  [121.960725, 30.890276],
+  [121.96029, 30.890427],
+  [121.959421, 30.890732],
+  [121.95926, 30.890824],
+  [121.95822, 30.89121],
+  [121.957983, 30.891263],
+  [121.955167, 30.892272],
+  [121.954963, 30.892401],
+  [121.95479, 30.892467],
+  [121.954766, 30.892423],
+  [121.954046, 30.892712],
+  [121.953933, 30.892755],
+  [121.953472, 30.891918],
+  [121.953129, 30.891371],
+  [121.952769, 30.890856],
+  [121.952445, 30.890439],
+  [121.952394, 30.890373],
+  [121.95168, 30.889579],
+  [121.951085, 30.889005],
+  [121.950559, 30.888555],
+  [121.949776, 30.887959],
+  [121.94918, 30.887567],
+  [121.948805, 30.887337],
+  [121.948317, 30.887063],
+  [121.948241, 30.887026],
+  [121.947539, 30.886677],
+  [121.94682, 30.886366],
+  [121.94616, 30.886114],
+  [121.9452, 30.885808],
+  [121.944465, 30.885625],
+  [121.943961, 30.885513],
+  [121.943183, 30.885384],
+  [121.942453, 30.885293],
+  [121.941965, 30.88525],
+  [121.94085, 30.885207],
+  [121.940683, 30.885073],
+  [121.940705, 30.884021],
+  [121.940705, 30.883973],
+  [121.940694, 30.883746],
+  [121.940683, 30.882568],
+  [121.940683, 30.882423],
+  [121.940683, 30.882364],
+  [121.940678, 30.881388],
+  [121.939758, 30.881418],
+  [121.939444, 30.881428],
+  [121.93939, 30.88143],
+  [121.938065, 30.881565],
+  [121.93733, 30.881672],
+  [121.936311, 30.881865],
+  [121.935313, 30.882106],
+  [121.934337, 30.882391],
+  [121.933817, 30.882568],
+  [121.933108, 30.882831],
+  [121.93225, 30.883195],
+  [121.931473, 30.883551],
+  [121.931389, 30.883589],
+  [121.930634, 30.884003],
+  [121.929909, 30.884432],
+  [121.92955, 30.884657],
+  [121.928886, 30.885126],
+  [121.928108, 30.885719],
+  [121.927696, 30.886047],
+  [121.927574, 30.886156],
+  [121.926842, 30.886845],
+  [121.926666, 30.887009],
+  [121.92627, 30.88744],
+  [121.926239, 30.887465],
+  [121.925705, 30.888083],
+  [121.925438, 30.888403],
+  [121.925056, 30.888929],
+  [121.924896, 30.889153],
+  [121.9244, 30.889904],
+  [121.923775, 30.891016],
+  [121.923477, 30.891663],
+  [121.923264, 30.892153],
+  [121.92305, 30.892717],
+  [121.922966, 30.892973],
+  [121.922852, 30.893316],
+  [121.922782, 30.89355],
+  [121.922669, 30.89398],
+  [121.922496, 30.894718],
+  [121.922396, 30.895321],
+  [121.922331, 30.895998],
+  [121.922257, 30.8973],
+  [121.922257, 30.897635],
+  [121.922261, 30.898086],
+  [121.922287, 30.898438],
+  [121.922294, 30.898581],
+  [121.922342, 30.899031],
+  [121.922428, 30.899611],
+  [121.922466, 30.899879],
+  [121.92253, 30.900233],
+  [121.922675, 30.900844],
+  [121.922766, 30.901177],
+  [121.922795, 30.901276],
+  [121.922954, 30.901788],
+  [121.923254, 30.902609],
+  [121.923555, 30.903275],
+  [121.923812, 30.903859],
+  [121.923876, 30.903988],
+  [121.924198, 30.90454],
+  [121.924461, 30.90498],
+  [121.924901, 30.905661],
+  [121.925475, 30.90645],
+  [121.926124, 30.907217],
+  [121.926269, 30.907362],
+  [121.926703, 30.907802],
+  [121.927562, 30.908617],
+  [121.927953, 30.907577],
+  [121.927986, 30.907528],
+  [121.92812, 30.907357],
+  [121.928517, 30.907008],
+  [121.929023, 30.907677]
+]
+const mock2 = [
+    [
+        48119.1,
+        -38457.3
+    ],
+    [
+        48082.8,
+        -38442.1
+    ],
+    [
+        47961.0,
+        -38392.1
+    ],
+    [
+        47723.4,
+        -38294.5
+    ],
+    [
+        47701.0,
+        -38284.4
+    ],
+    [
+        47617.9,
+        -38247.4
+    ],
+    [
+        47492.0,
+        -38196.2
+    ],
+    [
+        47453.8,
+        -38181.3
+    ],
+    [
+        47295.2,
+        -38113.4
+    ],
+    [
+        47132.2,
+        -38047.9
+    ],
+    [
+        47116.8,
+        -38037.9
+    ],
+    [
+        47039.8,
+        -38001.6
+    ],
+    [
+        47022.5,
+        -37996.2
+    ],
+    [
+        46917.0,
+        -37959.5
+    ],
+    [
+        46795.7,
+        -37911.3
+    ],
+    [
+        46754.3,
+        -37894.6
+    ],
+    [
+        46671.7,
+        -37860.7
+    ],
+    [
+        46656.4,
+        -37850.5
+    ],
+    [
+        46557.6,
+        -37807.7
+    ],
+    [
+        46535.0,
+        -37801.8
+    ],
+    [
+        46267.3,
+        -37689.9
+    ],
+    [
+        46247.9,
+        -37675.7
+    ],
+    [
+        46231.5,
+        -37668.3
+    ],
+    [
+        46229.2,
+        -37673.2
+    ],
+    [
+        46160.7,
+        -37641.2
+    ],
+    [
+        46150.0,
+        -37636.4
+    ],
+    [
+        46106.2,
+        -37728.5
+    ],
+    [
+        46073.6,
+        -37788.7
+    ],
+    [
+        46039.3,
+        -37845.4
+    ],
+    [
+        46008.5,
+        -37891.3
+    ],
+    [
+        46003.7,
+        -37898.5
+    ],
+    [
+        45932.3,
+        -37990.2
+    ],
+    [
+        45875.8,
+        -38053.3
+    ],
+    [
+        45825.8,
+        -38102.8
+    ],
+    [
+        45751.3,
+        -38168.3
+    ],
+    [
+        45694.6,
+        -38211.4
+    ],
+    [
+        45659.0,
+        -38236.6
+    ],
+    [
+        45612.5,
+        -38266.7
+    ],
+    [
+        45605.3,
+        -38270.8
+    ],
+    [
+        45538.6,
+        -38309.1
+    ],
+    [
+        45470.2,
+        -38343.2
+    ],
+    [
+        45407.4,
+        -38370.8
+    ],
+    [
+        45319.5,
+        -38408.6
+    ],
+    [
+        45249.6,
+        -38428.7
+    ],
+    [
+        45201.6,
+        -38440.9
+    ],
+    [
+        45127.6,
+        -38455.0
+    ],
+    [
+        45058.2,
+        -38464.8
+    ],
+    [
+        45011.8,
+        -38469.5
+    ],
+    [
+        44902.3,
+        -38478.2
+    ],
+    [
+        44886.4,
+        -38492.9
+    ],
+    [
+        44888.5,
+        -38608.9
+    ],
+    [
+        44888.5,
+        -38614.2
+    ],
+    [
+        44887.5,
+        -38639.2
+    ],
+    [
+        44886.4,
+        -38769.1
+    ],
+    [
+        44886.4,
+        -38785.0
+    ],
+    [
+        44886.4,
+        -38791.5
+    ],
+    [
+        44885.9,
+        -38899.1
+    ],
+    [
+        44798.4,
+        -38895.6
+    ],
+    [
+        44768.5,
+        -38894.5
+    ],
+    [
+        44763.4,
+        -38894.3
+    ],
+    [
+        44637.3,
+        -38879.1
+    ],
+    [
+        44567.4,
+        -38867.2
+    ],
+    [
+        44470.4,
+        -38845.8
+    ],
+    [
+        44375.4,
+        -38819.0
+    ],
+    [
+        44282.5,
+        -38787.5
+    ],
+    [
+        44233.0,
+        -38767.9
+    ],
+    [
+        44165.5,
+        -38738.8
+    ],
+    [
+        44083.8,
+        -38698.5
+    ],
+    [
+        44009.9,
+        -38659.2
+    ],
+    [
+        43998.6,
+        -38659.1
+    ],
+    [
+        43926.7,
+        -38613.3
+    ],
+    [
+        43857.7,
+        -38565.9
+    ],
+    [
+        43823.5,
+        -38541.1
+    ],
+    [
+        43760.2,
+        -38489.3
+    ],
+    [
+        43686.2,
+        -38423.8
+    ],
+    [
+        43643.7,
+        -38383.5
+    ],
+    [
+        43632.0,
+        -38371.5
+    ],
+    [
+        43562.3,
+        -38295.4
+    ],
+    [
+        43545.6,
+        -38277.3
+    ],
+    [
+        43507.9,
+        -38229.8
+    ],
+    [
+        43504.9,
+        -38227.0
+    ],
+    [
+        43454.1,
+        -38158.8
+    ],
+    [
+        43428.6,
+        -38123.5
+    ],
+    [
+        43392.3,
+        -38065.5
+    ],
+    [
+        43377.0,
+        -38040.8
+    ],
+    [
+        43329.8,
+        -37957.9
+    ],
+    [
+        43270.3,
+        -37835.2
+    ],
+    [
+        43241.9,
+        -37763.9
+    ],
+    [
+        43221.6,
+        -37709.8
+    ],
+    [
+        43201.2,
+        -37647.6
+    ],
+    [
+        43193.2,
+        -37619.4
+    ],
+    [
+        43179.1,
+        -37577.5
+    ],
+    [
+        43172.4,
+        -37551.7
+    ],
+    [
+        43161.7,
+        -37504.3
+    ],
+    [
+        43145.2,
+        -37422.9
+    ],
+    [
+        43135.6,
+        -37356.4
+    ],
+    [
+        43129.5,
+        -37281.8
+    ],
+    [
+        43122.4,
+        -37138.3
+    ],
+    [
+        43122.4,
+        -37101.3
+    ],
+    [
+        43122.8,
+        -37051.6
+    ],
+    [
+        43125.2,
+        -37012.8
+    ],
+    [
+        43125.9,
+        -36997.0
+    ],
+    [
+        43130.5,
+        -36947.4
+    ],
+    [
+        43138.7,
+        -36883.5
+    ],
+    [
+        43142.3,
+        -36854.0
+    ],
+    [
+        43148.4,
+        -36814.9
+    ],
+    [
+        43158.9,
+        -36743.5
+    ],
+    [
+        43167.6,
+        -36706.8
+    ],
+    [
+        43170.4,
+        -36695.9
+    ],
+    [
+        43185.5,
+        -36639.5
+    ],
+    [
+        43214.0,
+        -36549.0
+    ],
+    [
+        43242.7,
+        -36475.6
+    ],
+    [
+        43267.2,
+        -36411.3
+    ],
+    [
+        43273.3,
+        -36397.0
+    ],
+    [
+        43303.9,
+        -36336.2
+    ],
+    [
+        43329.0,
+        -36287.8
+    ],
+    [
+        43370.8,
+        -36212.7
+    ],
+    [
+        43425.5,
+        -36125.8
+    ],
+    [
+        43487.3,
+        -36041.3
+    ],
+    [
+        43501.1,
+        -36025.4
+    ],
+    [
+        43539.1,
+        -35972.8
+    ],
+    [
+        43620.9,
+        -35883.1
+    ],
+    [
+        43661.4,
+        -36001.9
+    ],
+    [
+        43664.5,
+        -36007.3
+    ],
+    [
+        43677.3,
+        -36026.2
+    ],
+    [
+        43715.1,
+        -36064.7
+    ],
+    [
+        43760.0,
+        -35986.9
+    ]
+]
 
 export default {
   name: 'XlsxPage',
   data() {
-    return {
-      buttonStyle: {},
-      clickAnimationClass: '',
-      mouseOutTimer: null
-    }
+    return {}
   },
   methods: {
-    // 按钮点击处理函数
-    handleButtonClick(index) {
-      // 根据按钮索引调用不同的方法
-      const methodName = `method${index}`
-      if (this[methodName]) {
-        this[methodName]()
-      } else {
-        console.log(`功能${index}尚未实现`)
-      }
-    },
-
-    // 20个不同的方法
-    method1() {
-      console.log('执行方法1')
-      this.test() // 原有的Excel处理方法
-    },
-
-    method2() {
-      console.log('执行方法2')
-      // 实现你的方法2逻辑
-    },
-
-    method3() {
-      console.log('执行方法3')
-      // 实现你的方法3逻辑
-    },
-
-    method4() {
-      console.log('执行方法4')
-      // 实现你的方法4逻辑
-    },
-
-    method5() {
-      console.log('执行方法5')
-      // 实现你的方法5逻辑
-    },
-
-    // ... 方法6到方法19 ...
-
-    method20() {
-      console.log('执行方法20')
-      // 实现你的方法20逻辑
-    },
-
-    // 原有的Excel处理方法
     test() {
-      console.log('开始测试')
-      const fileInput = document.createElement('input')
-      fileInput.type = 'file'
-      fileInput.addEventListener('change', handleFile, false)
-
-      function handleFile(event) {
-        const file = event.target.files[0]
-        const reader = new FileReader()
-        reader.onload = function (e) {
-          const data = new Uint8Array(e.target.result)
-          const workbook = XLSX.read(data, { type: 'array' })
-          const firstSheetName = workbook.SheetNames[0]
-          const worksheet = workbook.Sheets[firstSheetName]
-          const jsonData = XLSX.utils.sheet_to_json(worksheet)
-          console.log(jsonData)
-          jsonData.splice(0, 1)
-          downloadJsonFile(jsonData, 'excelData.json')
-        }
-        reader.readAsArrayBuffer(file)
-      }
-      fileInput.click()
-    },
-
-    handleMouseMove(e) {
-      const rect = e.target.getBoundingClientRect()
-      const x = ((e.clientX - rect.left) / rect.width) * 100
-      const y = ((e.clientY - rect.top) / rect.height) * 100
-      
-      this.buttonStyle = {
-        '--x': `${x}%`,
-        '--y': `${y}%`
-      }
-    },
-    
-    handleMouseOut() {
-      clearTimeout(this.mouseOutTimer)
-      this.mouseOutTimer = setTimeout(() => {
-        this.buttonStyle = {}
-      }, 200)
-    },
-    
-    handleClick(e) {
-      const rect = e.target.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      
-      // 根据点击位置决定动画效果
-      if (y < rect.height / 2) {
-        if (x < rect.width / 2) {
-          this.clickAnimationClass = 'clicked-top'
-        } else {
-          this.clickAnimationClass = 'clicked-right'
-        }
-      } else {
-        if (x < rect.width / 2) {
-          this.clickAnimationClass = 'clicked-left'
-        } else {
-          this.clickAnimationClass = 'clicked-bottom'
-        }
-      }
-      
-      // 动画结束后移除类名
-      setTimeout(() => {
-        this.clickAnimationClass = ''
-      }, 500)
-    },
-
-    handleGridMouseMove(e) {
-      const rect = e.currentTarget.getBoundingClientRect()
-      const x = ((e.clientX - rect.left) / rect.width) * 100
-      const y = ((e.clientY - rect.top) / rect.height) * 100
-      
-      e.currentTarget.style.setProperty('--mouse-x', `${x}%`)
-      e.currentTarget.style.setProperty('--mouse-y', `${y}%`)
+      console.log('测试方法', mock)
+      // const mock3 = mock.map(e => gcj02ToWgs84(e[1], e[0])).map(e => [e.lng, e.lat])
+      // console.log('mock3', mock3)
+      console.log('测试方法2', mock2)
+      const mock3 = mock2.map(e => ({ x: e[0], y: e[1], REAL_SITE: false }))
+      console.log('mock3', mock3)
     }
-  },
-  mounted() {
-    // 添加鼠标移动跟踪
-    const grid = document.querySelector('.button-grid')
-    grid.addEventListener('mousemove', this.handleGridMouseMove)
-  },
-  beforeDestroy() {
-    const grid = document.querySelector('.button-grid')
-    grid.removeEventListener('mousemove', this.handleGridMouseMove)
   }
-}
-
-function downloadJsonFile(data, filename = 'data.json') {
-  const jsonString = JSON.stringify(data)
-  const blob = new Blob([jsonString], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-
-  URL.revokeObjectURL(url) // 释放 URL
 }
 </script>
 
@@ -194,696 +681,25 @@ function downloadJsonFile(data, filename = 'data.json') {
   align-items: center;
   background: linear-gradient(
     125deg,
-    #1a0f3c,    /* 深紫 */
-    #2d0a3c,    /* 深玫瑰红 */
-    #1f1f3a,    /* 深蓝紫 */
-    #0f2d4a,    /* 深海蓝 */
-    #162c2d,    /* 深青 */
-    #1c2d0f,    /* 深绿 */
-    #2d1f0f,    /* 深橙 */
-    #2d0f0f,    /* 深红 */
-    #200f2d,    /* 深紫红 */
-    #0f1f2d,    /* 深蓝 */
-    #1a2d2d,    /* 深青绿 */
-    #2d2d0f,    /* 深黄 */
-    #2d1a0f,    /* 深橙红 */
-    #1f0f2d,    /* 深紫蓝 */
-    #0f2d1f,    /* 深绿蓝 */
-    #2d1f1f     /* 深红褐 */
+    #1a0f3c,
+    /* 深紫 */ #2d0a3c,
+    /* 深玫瑰红 */ #1f1f3a,
+    /* 深蓝紫 */ #0f2d4a,
+    /* 深海蓝 */ #162c2d,
+    /* 深青 */ #1c2d0f,
+    /* 深绿 */ #2d1f0f,
+    /* 深橙 */ #2d0f0f,
+    /* 深红 */ #200f2d,
+    /* 深紫红 */ #0f1f2d,
+    /* 深蓝 */ #1a2d2d,
+    /* 深青绿 */ #2d2d0f,
+    /* 深黄 */ #2d1a0f,
+    /* 深橙红 */ #1f0f2d,
+    /* 深紫蓝 */ #0f2d1f,
+    /* 深绿蓝 */ #2d1f1f /* 深红褐 */
   );
   background-size: 400% 400%;
   animation: rgbFlow 20s ease infinite;
   overflow: hidden;
-}
-
-@keyframes rgbFlow {
-  0% {
-    background-position: 0% 50%;
-    filter: hue-rotate(0deg);
-  }
-  25% {
-    background-position: 100% 50%;
-    filter: hue-rotate(90deg);
-  }
-  50% {
-    background-position: 100% 0%;
-    filter: hue-rotate(180deg);
-  }
-  75% {
-    background-position: 0% 100%;
-    filter: hue-rotate(270deg);
-  }
-  100% {
-    background-position: 0% 50%;
-    filter: hue-rotate(360deg);
-  }
-}
-
-/* 添加RGB光晕效果 */
-.xlsx-box::before,
-.xlsx-box::after {
-  content: "";
-  position: absolute;
-  width: 150%;
-  height: 150%;
-  top: -25%;
-  left: -25%;
-  background: 
-    radial-gradient(
-      circle at center,
-      transparent 0%,
-      rgba(255, 0, 128, 0.05) 30%,
-      rgba(0, 255, 255, 0.05) 60%,
-      rgba(128, 0, 255, 0.05) 90%,
-      transparent 100%
-    );
-  animation: rgbSpin 15s linear infinite;
-  transform-origin: center center;
-  mix-blend-mode: color-dodge;
-}
-
-.xlsx-box::after {
-  animation: rgbSpin 12s linear infinite reverse;
-  background: 
-    radial-gradient(
-      circle at center,
-      transparent 0%,
-      rgba(0, 255, 255, 0.05) 30%,
-      rgba(255, 0, 128, 0.05) 60%,
-      rgba(128, 255, 0, 0.05) 90%,
-      transparent 100%
-    );
-  mix-blend-mode: screen;
-}
-
-@keyframes rgbSpin {
-  0% {
-    transform: rotate(0deg) scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: rotate(180deg) scale(1.2);
-    opacity: 0.5;
-  }
-  100% {
-    transform: rotate(360deg) scale(1);
-    opacity: 0.7;
-  }
-}
-
-/* 添加RGB扫描线效果 */
-.xlsx-box::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: repeating-linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 0, 128, 0.03) 33%,
-    rgba(0, 255, 255, 0.03) 66%,
-    rgba(128, 0, 255, 0.03) 100%
-  );
-  background-size: 300% 100%;
-  animation: rgbScan 8s linear infinite;
-  mix-blend-mode: overlay;
-}
-
-@keyframes rgbScan {
-  0% {
-    background-position: 100% 0%;
-  }
-  100% {
-    background-position: -100% 0%;
-  }
-}
-
-/* 确保内容容器正确定位并添加玻璃态效果 */
-.content-container {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(2px);
-}
-
-/* 更新按钮样式 */
-button {
-  position: relative;
-  z-index: 3;
-  margin-right: 1rem;
-  padding: 20px 40px;
-  font-size: 16px;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: linear-gradient(
-    45deg,
-    #ff3366,  /* 亮玫红 */
-    #ff6b6b,  /* 亮珊瑚 */
-    #4ecdc4,  /* 亮青绿 */
-    #45b7d1,  /* 亮天蓝 */
-    #96c93d,  /* 亮绿 */
-    #e5c07b,  /* 亮金 */
-    #ff3366   /* 回到起始颜色，形成循环 */
-  );
-  background-size: 300% 300%;
-  animation: buttonGradient 8s ease infinite;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-style: preserve-3d;
-  overflow: hidden;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  letter-spacing: 1px;
-  font-weight: bold;
-}
-
-@keyframes buttonGradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at var(--x, 50%) var(--y, 50%), 
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(255, 255, 255, 0) 60%
-  );
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-}
-
-button:hover {
-  transform: scale(1.05) rotate3d(1, 1, 0, 15deg);
-  animation: buttonGradient 4s ease infinite, pulse 2s infinite;
-  box-shadow: 
-    0 10px 20px rgba(0, 0, 0, 0.2),
-    0 0 30px rgba(255, 51, 102, 0.4),
-    0 0 50px rgba(69, 183, 209, 0.2);
-}
-
-button:hover::before {
-  opacity: 1;
-}
-
-button:active {
-  transform: scale(0.95) rotate3d(1, 1, 0, -5deg);
-  box-shadow: 
-    0 5px 10px rgba(0, 0, 0, 0.1),
-    0 0 20px rgba(255, 51, 102, 0.3);
-}
-
-button.clicked-top {
-  animation: bounce-top 0.5s;
-}
-
-button.clicked-bottom {
-  animation: bounce-bottom 0.5s;
-}
-
-button.clicked-left {
-  animation: bounce-left 0.5s;
-}
-
-button.clicked-right {
-  animation: bounce-right 0.5s;
-}
-
-@keyframes bounce-top {
-  0%, 100% { 
-    transform: translateY(0);
-    box-shadow: 0 0 20px rgba(255, 51, 102, 0.3);
-  }
-  50% { 
-    transform: translateY(-10px) rotate3d(1, 0, 0, 20deg);
-    box-shadow: 0 20px 30px rgba(255, 51, 102, 0.4);
-  }
-}
-
-@keyframes bounce-bottom {
-  0%, 100% { 
-    transform: translateY(0);
-    box-shadow: 0 0 20px rgba(69, 183, 209, 0.3);
-  }
-  50% { 
-    transform: translateY(10px) rotate3d(1, 0, 0, -20deg);
-    box-shadow: 0 -20px 30px rgba(69, 183, 209, 0.4);
-  }
-}
-
-@keyframes bounce-left {
-  0%, 100% { 
-    transform: translateX(0);
-    box-shadow: 0 0 20px rgba(150, 201, 61, 0.3);
-  }
-  50% { 
-    transform: translateX(-10px) rotate3d(0, 1, 0, -20deg);
-    box-shadow: 20px 0 30px rgba(150, 201, 61, 0.4);
-  }
-}
-
-@keyframes bounce-right {
-  0%, 100% { 
-    transform: translateX(0);
-    box-shadow: 0 0 20px rgba(229, 192, 123, 0.3);
-  }
-  50% { 
-    transform: translateX(10px) rotate3d(0, 1, 0, 20deg);
-    box-shadow: -20px 0 30px rgba(229, 192, 123, 0.4);
-  }
-}
-
-/* 更新脉冲动画效果 */
-@keyframes pulse {
-  0% {
-    box-shadow: 
-      0 0 20px rgba(255, 51, 102, 0.3),
-      0 0 40px rgba(69, 183, 209, 0.2);
-  }
-  50% {
-    box-shadow: 
-      0 0 30px rgba(255, 51, 102, 0.5),
-      0 0 60px rgba(69, 183, 209, 0.3);
-  }
-  100% {
-    box-shadow: 
-      0 0 20px rgba(255, 51, 102, 0.3),
-      0 0 40px rgba(69, 183, 209, 0.2);
-  }
-}
-
-/* 保持现有样式不变，添加以下网格布局样式 */
-
-.button-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: clamp(1rem, 2vw, 2rem);
-  width: min(95%, 1400px);
-  margin: 0 auto;
-  padding: clamp(1rem, 3vw, 2rem);
-  place-items: center;
-  perspective: 1000px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 更新按钮基础样式 */
-.button-grid button {
-  width: 100%;
-  min-width: 160px;
-  max-width: 280px;
-  height: clamp(50px, 8vh, 70px);
-  padding: 0 clamp(10px, 2vw, 20px);
-  font-size: clamp(14px, 1.5vw, 16px);
-  white-space: nowrap;
-  position: relative;
-  overflow: hidden;
-  --wave-delay: calc((var(--row) + var(--col)) * 0.15s);
-  animation: 
-    buttonAppear 0.5s ease-out backwards,
-    waveEffect 3s ease-in-out infinite;
-  animation-delay: 
-    calc(var(--index) * 0.1s),
-    calc(var(--wave-delay) + 0.5s); /* 0.5s是初始延迟 */
-}
-
-/* 为不同位置的按钮添加细微的变化 */
-.button-grid button:nth-child(4n + 1) {
-  --start-color: #ff3366;
-  --end-color: #ff6b6b;
-}
-
-.button-grid button:nth-child(4n + 2) {
-  --start-color: #4ecdc4;
-  --end-color: #45b7d1;
-}
-
-.button-grid button:nth-child(4n + 3) {
-  --start-color: #96c93d;
-  --end-color: #e5c07b;
-}
-
-.button-grid button:nth-child(4n + 4) {
-  --start-color: #45b7d1;
-  --end-color: #ff3366;
-}
-
-/* 为每个按钮添加稍微不同的动画延迟 */
-.button-grid button {
-  animation-delay: calc(var(--index) * 0.1s);
-}
-
-/* 更新内容容器样式 */
-.content-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  width: 100%;
-  padding: clamp(1rem, 3vw, 2rem);
-  box-sizing: border-box;
-}
-
-/* 添加响应式布局 */
-@media (max-width: 600px) {
-  .button-grid {
-    gap: 1rem;
-    padding: 1rem;
-  }
-  
-  .button-grid button {
-    font-size: 14px;
-    height: 45px;
-  }
-}
-
-/* 添加按钮出现动画 */
-@keyframes buttonAppear {
-  from {
-    opacity: 0;
-    transform: scale(0.8) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.button-grid button {
-  animation: buttonAppear 0.5s ease-out backwards,
-             waveEffect 4s ease-in-out infinite;
-  animation-delay: calc(var(--index) * 0.1s);
-}
-
-/* 为每个按钮设置不同的初始延迟 */
-.button-grid button:nth-child(n) {
-  --index: calc(var(--n) - 1);
-}
-
-/* 设置20个按钮的具体延迟 */
-.button-1 { --n: 1; }
-.button-2 { --n: 2; }
-.button-3 { --n: 3; }
-.button-4 { --n: 4; }
-.button-5 { --n: 5; }
-.button-6 { --n: 6; }
-.button-7 { --n: 7; }
-.button-8 { --n: 8; }
-.button-9 { --n: 9; }
-.button-10 { --n: 10; }
-.button-11 { --n: 11; }
-.button-12 { --n: 12; }
-.button-13 { --n: 13; }
-.button-14 { --n: 14; }
-.button-15 { --n: 15; }
-.button-16 { --n: 16; }
-.button-17 { --n: 17; }
-.button-18 { --n: 18; }
-.button-19 { --n: 19; }
-.button-20 { --n: 20; }
-
-/* 添加波浪效果遮罩 */
-.button-grid button::before {
-  content: '';
-  position: absolute;
-  top: -150%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.3) 0%,
-    rgba(255, 255, 255, 0.1) 30%,
-    transparent 70%
-  );
-  animation: diagonalWave 4s linear infinite;
-  /* 使用新的方式计算动画延迟 */
-  animation-delay: calc(var(--index) * 0.1s);
-  transform-origin: center;
-  pointer-events: none;
-}
-
-@keyframes diagonalWave {
-  0% {
-    transform: translate(-30%, -30%) rotate(0deg);
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate(30%, 30%) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-/* 为每个按钮设置行列位置变量 */
-.button-grid button:nth-child(5n + 1) { --col: 0; }
-.button-grid button:nth-child(5n + 2) { --col: 1; }
-.button-grid button:nth-child(5n + 3) { --col: 2; }
-.button-grid button:nth-child(5n + 4) { --col: 3; }
-.button-grid button:nth-child(5n + 5) { --col: 4; }
-
-.button-grid button:nth-child(-n + 5) { --row: 0; }
-.button-grid button:nth-child(n + 6):nth-child(-n + 10) { --row: 1; }
-.button-grid button:nth-child(n + 11):nth-child(-n + 15) { --row: 2; }
-.button-grid button:nth-child(n + 16):nth-child(-n + 20) { --row: 3; }
-
-/* 添加连续波浪效果 */
-.button-grid::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
-  animation: globalWave 3s linear infinite;
-  pointer-events: none;
-  z-index: 2;
-}
-
-@keyframes globalWave {
-  0% {
-    transform: translate(-100%, -100%) rotate(45deg);
-  }
-  100% {
-    transform: translate(100%, 100%) rotate(45deg);
-  }
-}
-
-/* 更新按钮悬浮效果 */
-.button-grid button:hover {
-  transform: scale(1.05) rotate3d(1, 1, 0, 15deg);
-  z-index: 10;
-  box-shadow: 
-    0 clamp(5px, 1vw, 10px) clamp(10px, 2vw, 20px) rgba(0, 0, 0, 0.2),
-    0 0 clamp(15px, 3vw, 30px) rgba(255, 255, 255, 0.2);
-}
-
-.button-grid button:hover::before {
-  animation-play-state: paused;
-}
-
-/* 添加自动计算的按钮索引 */
-.button-grid button {
-  --index: calc(var(--n, 1) - 1);
-  animation: buttonAppear 0.5s ease-out backwards,
-             waveEffect 4s ease-in-out infinite;
-  animation-delay: calc(var(--index) * 0.1s);
-}
-
-/* 更新悬浮效果以适应不同尺寸 */
-.button-grid button:hover {
-  transform: scale(1.05) rotate3d(1, 1, 0, 15deg);
-  z-index: 10;
-  box-shadow: 
-    0 clamp(5px, 1vw, 10px) clamp(10px, 2vw, 20px) rgba(0, 0, 0, 0.2),
-    0 0 clamp(15px, 3vw, 30px) rgba(255, 255, 255, 0.2);
-}
-
-/* 更新全局波浪效果 */
-.button-grid::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
-  animation: globalWave 3s linear infinite;
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* 添加整体光效 */
-.button-grid::before {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  top: -50%;
-  left: -50%;
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 60%
-  );
-  animation: rotateLight 8s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes rotateLight {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* 更新波浪效果动画 */
-@keyframes waveEffect {
-  0% {
-    transform: scale(1);
-    filter: brightness(1) hue-rotate(0deg);
-  }
-  50% {
-    transform: scale(1.1);
-    filter: brightness(1.3) hue-rotate(15deg);
-  }
-  100% {
-    transform: scale(1);
-    filter: brightness(1) hue-rotate(0deg);
-  }
-}
-
-/* 为每个按钮设置位置变量，用于计算波浪延迟 */
-.button-grid {
-  --total-cols: 5;
-  --total-rows: 4;
-}
-
-/* 设置按钮的行列位置 */
-.button-1 { --row: 0; --col: 4; }  /* 右上角开始 */
-.button-2 { --row: 0; --col: 3; }
-.button-3 { --row: 0; --col: 2; }
-.button-4 { --row: 0; --col: 1; }
-.button-5 { --row: 0; --col: 0; }
-.button-6 { --row: 1; --col: 4; }
-.button-7 { --row: 1; --col: 3; }
-.button-8 { --row: 1; --col: 2; }
-.button-9 { --row: 1; --col: 1; }
-.button-10 { --row: 1; --col: 0; }
-.button-11 { --row: 2; --col: 4; }
-.button-12 { --row: 2; --col: 3; }
-.button-13 { --row: 2; --col: 2; }
-.button-14 { --row: 2; --col: 1; }
-.button-15 { --row: 2; --col: 0; }
-.button-16 { --row: 3; --col: 4; }
-.button-17 { --row: 3; --col: 3; }
-.button-18 { --row: 3; --col: 2; }
-.button-19 { --row: 3; --col: 1; }
-.button-20 { --row: 3; --col: 0; }  /* 左下角结束 */
-
-/* 为每个按钮设置不同的基础颜色 */
-.button-1 { background: linear-gradient(45deg, #ff3366, #ff6b6b); }
-.button-2 { background: linear-gradient(45deg, #ff6b6b, #ffd93d); }
-.button-3 { background: linear-gradient(45deg, #ffd93d, #4ecdc4); }
-.button-4 { background: linear-gradient(45deg, #4ecdc4, #45b7d1); }
-.button-5 { background: linear-gradient(45deg, #45b7d1, #6c5ce7); }
-.button-6 { background: linear-gradient(45deg, #6c5ce7, #a8e6cf); }
-.button-7 { background: linear-gradient(45deg, #a8e6cf, #ff9a9e); }
-.button-8 { background: linear-gradient(45deg, #ff9a9e, #fad0c4); }
-.button-9 { background: linear-gradient(45deg, #fad0c4, #f6d365); }
-.button-10 { background: linear-gradient(45deg, #f6d365, #fda085); }
-.button-11 { background: linear-gradient(45deg, #fda085, #f5576c); }
-.button-12 { background: linear-gradient(45deg, #f5576c, #4facfe); }
-.button-13 { background: linear-gradient(45deg, #4facfe, #00f2fe); }
-.button-14 { background: linear-gradient(45deg, #00f2fe, #43e97b); }
-.button-15 { background: linear-gradient(45deg, #43e97b, #38f9d7); }
-.button-16 { background: linear-gradient(45deg, #38f9d7, #fa709a); }
-.button-17 { background: linear-gradient(45deg, #fa709a, #fee140); }
-.button-18 { background: linear-gradient(45deg, #fee140, #30cfd0); }
-.button-19 { background: linear-gradient(45deg, #30cfd0, #330867); }
-.button-20 { background: linear-gradient(45deg, #330867, #a8edea); }
-
-/* 添加按钮的光效遮罩 */
-.button-grid button::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 255, 255, 0.3) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.button-grid button:hover::before {
-  opacity: 1;
-}
-
-/* 添加全局波浪效果 */
-.button-grid::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
-  transform-origin: top right;
-  animation: globalWave 6s linear infinite;
-  pointer-events: none;
-  z-index: 2;
-}
-
-@keyframes globalWave {
-  0% {
-    transform: translate(-100%, -100%) rotate(45deg);
-    opacity: 0;
-  }
-  20% {
-    opacity: 1;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate(100%, 100%) rotate(45deg);
-    opacity: 0;
-  }
 }
 </style>
