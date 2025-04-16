@@ -15,7 +15,13 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/claude-generate'
+    redirect: '/stt'
+  },
+  {
+    // 语音识别功能
+    path: '/stt',
+    name: 'SttPage',
+    component: () => import('@/views/stt/index')
   },
   {
     // claude-generate 生成页面测试
@@ -89,6 +95,12 @@ const routes = [
     path: '/echart-1',
     name: 'EchartOne',
     component: () => import('@/views/echarts/index1')
+  },
+  {
+    // echart图表2
+    path: '/echart-2',
+    name: 'EchartTwo',
+    component: () => import('@/views/echarts/index2')
   },
   {
     // md实现流程图2

@@ -19,7 +19,7 @@
     "core-js": "^3.8.3",
     "diff-dom": "^5.1.4",
     "dom-to-image": "^2.6.0",
-    "echarts": "^4.9.0",
+    "echarts": "^5.6.0",
     "highlight.js": "^11.10.0",
     "js-audio-recorder": "^1.0.7",
     "less-loader": "^12.2.0",
