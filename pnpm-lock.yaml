@@ -59,6 +59,9 @@ dependencies:
   markdown-it-html5-embed:
     specifier: ^1.0.0
     version: 1.0.0
+  marked:
+    specifier: ^15.0.8
+    version: 15.0.8
   mind-elixir:
     specifier: ^4.0.5
     version: 4.1.2
@@ -6906,6 +6909,12 @@ packages:
       linkify-it: 2.2.0
       mdurl: 1.0.1
       uc.micro: 1.0.6
+    dev: false
+
+  /marked@15.0.8:
+    resolution: {integrity: sha512-rli4l2LyZqpQuRve5C0rkn6pj3hT8EWPC+zkAxFTAJLxRbENfTAhEQq9itrmf1Y81QtAX5D/MYlGlIomNgj9lA==}
+    engines: {node: '>= 18'}
+    hasBin: true
     dev: false
 
   /mdn-data@2.0.14:

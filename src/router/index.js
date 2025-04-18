@@ -15,7 +15,13 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/stt'
+    redirect: '/marked'
+  },
+  {
+    // 语音识别功能
+    path: '/marked',
+    name: 'MarkedPage',
+    component: () => import('@/views/marked/index')
   },
   {
     // 语音识别功能

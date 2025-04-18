@@ -26,6 +26,7 @@
     "markdown-it": "^14.1.0",
     "markdown-it-container": "^4.0.0",
     "markdown-it-html5-embed": "^1.0.0",
+    "marked": "^15.0.8",
     "mind-elixir": "^4.0.5",
     "nanoid": "^5.0.7",
     "pdfjs-dist": "^2.6.347",

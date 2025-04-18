@@ -27,24 +27,23 @@ let socketManager = null // 长连接控制器
 let mediaStream = null // 流媒体控制器
 let streamManager = null
 let audioCtx = null
-let recordSampleRate = null
+let recordSampleRate = null // 音频采样率 对齐16000使用
 let recorder = null
-const expectedSampleRate = 16000
 
 function downsampleBuffer(buffer, exportSampleRate) {
   if (exportSampleRate === recordSampleRate) {
     return buffer
   }
-  var sampleRateRatio = recordSampleRate / exportSampleRate
-  var newLength = Math.round(buffer.length / sampleRateRatio)
-  var result = new Float32Array(newLength)
-  var offsetResult = 0
-  var offsetBuffer = 0
+  let sampleRateRatio = recordSampleRate / exportSampleRate
+  let newLength = Math.round(buffer.length / sampleRateRatio)
+  let result = new Float32Array(newLength)
+  let offsetResult = 0
+  let offsetBuffer = 0
   while (offsetResult < result.length) {
-    var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio)
-    var accum = 0,
+    let nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio)
+    let accum = 0,
       count = 0
-    for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+    for (let i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
       accum += buffer[i]
       count++
     }
@@ -79,6 +78,24 @@ export default {
         this.isRecording = true
 
         setTimeout(() => {
+          recorder.onaudioprocess = e => {
+            let samples = new Float32Array(e.inputBuffer.getChannelData(0))
+            const expectedSampleRate = 16000
+            samples = downsampleBuffer(samples, expectedSampleRate)
+
+            let buf = new Int16Array(samples.length)
+            for (let i = 0; i < samples.length; ++i) {
+              let s = samples[i]
+              if (s >= 1) s = 1
+              else if (s <= -1) s = -1
+
+              samples[i] = s
+              buf[i] = s * 32767
+            }
+
+            console.log('samples', samples)
+            socketManager.send(samples)
+          }
           // 关联输出
           mediaStream.connect(recorder)
           recorder.connect(audioCtx.destination)
@@ -156,38 +173,20 @@ export default {
           if (!audioCtx) {
             audioCtx = new AudioContext()
           }
-          console.log('audioCtx', audioCtx)
           recordSampleRate = audioCtx.sampleRate
-          console.log('sample rate ' + recordSampleRate)
+          console.log('-------recordSampleRate--------', recordSampleRate)
 
           mediaStream = audioCtx.createMediaStreamSource(stream)
 
-          var bufferSize = 2048
-          var numberOfInputChannels = 2
-          var numberOfOutputChannels = 2
+          const bufferSize = 2048
+          const numberOfInputChannels = 2
+          const numberOfOutputChannels = 2
           if (audioCtx.createScriptProcessor) {
             recorder = audioCtx.createScriptProcessor(bufferSize, numberOfInputChannels, numberOfOutputChannels)
           } else {
             recorder = audioCtx.createJavaScriptNode(bufferSize, numberOfInputChannels, numberOfOutputChannels)
           }
           console.log('recorder', recorder)
-
-          recorder.onaudioprocess = e => {
-            let samples = new Float32Array(e.inputBuffer.getChannelData(0))
-            samples = downsampleBuffer(samples, expectedSampleRate)
-
-            let buf = new Int16Array(samples.length)
-            for (var i = 0; i < samples.length; ++i) {
-              let s = samples[i]
-              if (s >= 1) s = 1
-              else if (s <= -1) s = -1
-
-              samples[i] = s
-              buf[i] = s * 32767
-            }
-
-            socketManager.send(samples)
-          }
 
           streamManager = stream
           resolve()
