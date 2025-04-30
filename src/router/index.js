@@ -15,7 +15,13 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/marked'
+    redirect: '/markdown-it-2'
+  },
+  {
+    // markdown中的`\n`问题
+    path: '/markdown-it-2',
+    name: 'MarkdownIt2',
+    component: () => import('@/views/markdown-it2/index')
   },
   {
     // 语音识别功能
