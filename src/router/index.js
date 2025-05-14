@@ -15,13 +15,13 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/lit_sub'
+    redirect: '/markdown-it-2'
   },
   {
-    // 测试lit插件
-    path: '/lit_sub',
-    name: 'LitSub',
-    component: () => import('@/views/lit_sub/index')
+    // markdown中的`\n`问题
+    path: '/markdown-it-2',
+    name: 'MarkdownIt2',
+    component: () => import('@/views/markdown-it2/index')
   },
   {
     // 语音识别功能
