@@ -15,7 +15,13 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/markdown-it-2'
+    redirect: '/lit_sub'
+  },
+  {
+    // markdown中的`\n`问题
+    path: '/lit_sub',
+    name: 'LitSub',
+    component: () => import('@/views/lit_sub/index')
   },
   {
     // markdown中的`\n`问题
