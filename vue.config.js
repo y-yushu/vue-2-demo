@@ -1,6 +1,6 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
-  transpileDependencies: true,
+  // transpileDependencies: true,
   // 配置代理
   devServer: {
     port: 8080, // 设置开发服务器的端口号，默认是8080

@@ -15,7 +15,13 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/marked'
+    redirect: '/lit_sub'
+  },
+  {
+    // 测试lit插件
+    path: '/lit_sub',
+    name: 'LitSub',
+    component: () => import('@/views/lit_sub/index')
   },
   {
     // 语音识别功能
