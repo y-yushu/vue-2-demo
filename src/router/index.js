@@ -25,6 +25,12 @@ const routes = [
   },
   {
     // markdown中的`\n`问题
+    path: '/svg-render',
+    name: 'SvgRender',
+    component: () => import('@/views/svg-render/index')
+  },
+  {
+    // markdown中的`\n`问题
     path: '/markdown-it-2',
     name: 'MarkdownIt2',
     component: () => import('@/views/markdown-it2/index')

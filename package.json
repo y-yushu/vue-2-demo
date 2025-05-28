@@ -44,7 +44,7 @@
     "vue-timeline-component": "^0.1.6",
     "vuex": "^3.6.2",
     "xlsx": "^0.18.5",
-    "ys-md-rendering": "^0.1.10"
+    "ys-md-rendering": "^0.1.11"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
