@@ -19,6 +19,12 @@ const routes = [
   },
   {
     // markdown中的`\n`问题
+    path: '/mermaid-demo',
+    name: 'MermaidDemo',
+    component: () => import('@/views/mermaid-demo/index')
+  },
+  {
+    // markdown中的`\n`问题
     path: '/lit_sub',
     name: 'LitSub',
     component: () => import('@/views/lit_sub/index')
