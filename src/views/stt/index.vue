@@ -22,7 +22,7 @@
 <script>
 /// GitHub:
 /// https://github.com/k2-fsa/sherpa-onnx
-const baseurl = 'wss://192.168.78.159:6006/'
+const baseurl = process.env.VUE_APP_STT_URL
 let socketManager = null // 长连接控制器
 let mediaStream = null // 流媒体控制器
 let streamManager = null
