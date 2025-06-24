@@ -18,6 +18,12 @@ const routes = [
     redirect: '/lit_sub'
   },
   {
+    // iframe - 台风路径发布系统
+    path: '/iframe-slt-zj',
+    name: 'IframeSltZj',
+    component: () => import('@/views/iframe/slt-zj')
+  },
+  {
     // markdown中的`\n`问题
     path: '/mermaid-demo',
     name: 'MermaidDemo',
