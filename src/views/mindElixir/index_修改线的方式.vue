@@ -1,8 +1,10 @@
 <template>
   <div class="box">
-    <div id="map" @mousemove="handleMouseMove"></div>
+    <div id="map"></div>
     <div style="margin-top: 20px">
       <button @click="test1">测试1</button>
+      <button @click="test2">测试2</button>
+      <button @click="test3">测试3</button>
     </div>
   </div>
 </template>
@@ -32,11 +34,7 @@ export default {
   name: 'MindElixir',
   data() {
     return {
-      ME: null,
-      // 单击双击防抖处理
-      clickTimer: null,
-      clickCount: 0,
-      lastClickedNode: null
+      ME: null
     }
   },
   mounted() {
@@ -75,9 +73,6 @@ export default {
       nodeData: mock,
       theme
     })
-
-    // 监听节点选择事件（需要防抖处理单击/双击）
-    this.ME.bus.addListener('selectNode', this.handleNodeSelect)
   },
   methods: {
     test1() {
@@ -104,47 +99,14 @@ export default {
         nodeData: mock2
       })
     },
-
-    // 单击双击事件
-    handleNodeSelect(nodeData) {
-      // 如果是同一个节点
-      if (this.lastClickedNode && this.lastClickedNode.id === nodeData.id) {
-        this.clickCount++
-      } else {
-        // 不同节点，重置计数
-        this.clickCount = 1
-        this.lastClickedNode = nodeData
-      }
-
-      // 清除之前的定时器
-      if (this.clickTimer) {
-        clearTimeout(this.clickTimer)
-      }
-
-      // 设置新的定时器
-      this.clickTimer = setTimeout(() => {
-        if (this.clickCount === 1) {
-          // 单击
-          console.log('触发点击', nodeData)
-        } else if (this.clickCount >= 2) {
-          // 双击（或多击，都当作双击处理）
-          console.log('触发双击', nodeData)
-        }
-        // 重置计数
-        this.clickCount = 0
-        this.lastClickedNode = null
-      }, 200) // 200ms内的多次点击判断为双击
+    test2() {
+      const data1 = this.ME.getData()
+      console.log('data1', data1)
+      const data2 = this.ME.getDataString()
+      console.log('data2', data2)
     },
-
-    // 鼠标移动事件
-    handleMouseMove(e) {
-      const hasMeTpc = e?.target?.querySelector('me-tpc') !== null
-      if (!hasMeTpc) {
-        if (e.target) {
-          const nodeId = e.target.getAttribute('data-nodeid')
-          console.log('鼠标所在节点的id:', nodeId)
-        }
-      }
+    test3() {
+      this.ME.reshapeNode(MindElixir.E('child1'), { style: { color: 'red', fontWeight: 900 } })
     }
   }
 }
