@@ -36,7 +36,9 @@ export default {
       // 单击双击防抖处理
       clickTimer: null,
       clickCount: 0,
-      lastClickedNode: null
+      lastClickedNode: null,
+      // 鼠标移入id
+      hoverId: ''
     }
   },
   mounted() {
@@ -138,11 +140,16 @@ export default {
 
     // 鼠标移动事件
     handleMouseMove(e) {
-      const hasMeTpc = e?.target?.querySelector('me-tpc') !== null
-      if (!hasMeTpc) {
-        if (e.target) {
-          const nodeId = e.target.getAttribute('data-nodeid')
-          console.log('鼠标所在节点的id:', nodeId)
+      if (e?.target?.tagName === 'ME-TPC') {
+        const nodeId = e.target.getAttribute('data-nodeid')
+        if (nodeId !== this.hoverId) {
+          console.log('鼠标移入', nodeId)
+          this.hoverId = nodeId
+        }
+      } else {
+        if (this.hoverId) {
+          console.log('鼠标移出', this.hoverId)
+          this.hoverId = ''
         }
       }
     }
